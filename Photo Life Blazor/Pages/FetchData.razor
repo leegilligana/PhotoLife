@@ -1,0 +1,57 @@
+﻿@page "/fetchdata"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using Photo_Life_Blazor.Services
+@using Photo_Life_Blazor.Models
+@using System.Diagnostics;
+@using Unsplasharp
+@inject WeatherForecastService ForecastService
+@inject UnsplashService Unsplash_Service
+
+<h1>Unsplash Sample</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (imageMetadata == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Lat</th>
+                <th>Long</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var field in imageMetadata)
+            {
+                <tr>    
+                    <td>@field.ImageExif.Make</td>
+                    <td>@field.ImageExif.Model</td>
+                    <td>@field.ImagePosition.Latitude</td>
+                    <td>@field.ImagePosition.Longitude</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    private List<ImageMetadata>? imageMetadata;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Debug.WriteLine("Hey!");
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        imageMetadata = await Unsplash_Service.GetImageMetadataAsync(5);
+        Debug.WriteLine("Hey!");
+    }
+}
