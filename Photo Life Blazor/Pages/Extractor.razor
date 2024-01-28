@@ -1,0 +1,30 @@
+﻿@page "/extractor"
+@inject NavigationManager NavigationManager
+
+<PageTitle>PhotoLife: Metadata Extractor</PageTitle>
+@* Title and Description *@
+<div class="text-center my-2">
+    <h1>Image Metadata Extractor</h1>
+    <h5>Please upload a photo (of file extension .HEIC or .EXIF) of your own or pick a random one from Unsplash to
+        display metadata information for. Once you have your results, you'll be able to print them to a downloadable
+        PDF File(?). Only one photo can be uploaded and extracted at a time.
+    </h5>
+</div><br />
+
+@* Button Options *@
+<div class="text-center">
+    <div class="form-group d-inline-block mx-auto">
+        <button class="extr btn btn-outline-primary" @onclick="() => Modal.Open()">Upload Own Photo</button>
+    </div>
+    <div class="form-group d-inline-block mx-auto">
+        <button class="extr btn btn-outline-primary" @onclick="() => Loading.Open()">Use Random Unsplash Photo</button>
+    </div>
+</div>
+
+<Modal @ref="Modal"></Modal>
+<Loading @ref="Loading"></Loading>
+
+@code {
+    private Modal Modal { get; set; }
+    private Loading Loading { get; set; }
+}

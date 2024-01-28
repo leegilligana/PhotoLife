@@ -1,0 +1,59 @@
+﻿@page "/results"
+@* @page "/results/{FileName}" *@
+@inject NavigationManager NavigationManager
+
+<PageTitle>Results</PageTitle>
+
+<div class="text-center">
+    <h2>Metadata</h2>
+</div>
+
+@* Print Metadata Results *@
+<div>
+    @foreach (String field in allMetadata)
+    {
+        <div class="alert alert-secondary mt-4" role="alert">
+            <span class="oi mr-2" aria-hidden="true"></span>
+            <strong>@field</strong>
+        </div>
+    }
+</div>
+
+<button type="button" class="btn btn-default" @onclick="() => GoBack()">Extract New Photo</button>
+
+@code {
+    static string field1 = new string("File Type");
+    static string field2 = new string("File Size");
+    static string field3 = new string("File Name");
+    static string field4 = new string("Image Width");
+    static string field5 = new string("Image Height");
+    static string field6 = new string("Lens Model");
+    static string field7 = new string("Date & Time");
+    static string field8 = new string("Timezone");
+    static string field9 = new string("Brightness");
+    static string field10 = new string("Flash");
+    static string field11 = new string("Latitude Direction");
+    static string field12 = new string("Latitude Coordinates");
+    static string field13 = new string("Longitude Direction");
+    static string field14 = new string("Longitude Coordinates");
+    static string field15 = new string("Altitude Level");
+    static string field16 = new string("Altitude");
+    static string field17 = new string("File Modified Date");
+    static string field18 = new string("Focal Length");
+    static string field19 = new string("Color Space(RBG, CMYK)");
+    static string field20 = new string("Red Colorant");
+    static string field21 = new string("Blue Colorant");
+    static string field22 = new string("Green Colorant");
+    static string field23 = new string("Tag Count");
+
+    private List<string> allMetadata = new List<string>()
+    {
+        field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12,
+        field13, field14, field15, field16, field17, field18, field19, field20, field21, field22, field23
+    };
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/extractor");
+    }
+}

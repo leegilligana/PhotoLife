@@ -1,0 +1,62 @@
+@inject NavigationManager NavigationManager
+
+@* PopUp *@
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-header d-block align-content-center">
+                    <h3>Upload Photo File</h3>
+                    Acceptable Files Types: .HEIC & .EXIF
+                </div>
+                <div class="modal-body">
+                    <InputFile @bind-Value="FileName" accept=".heic, .exif" required />
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-success" value="Get Data" @onclick="NavigateToResults">Get Data</input>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Exit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    private string FileName;
+
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        
+    }
+
+    private void NavigateToResults()
+    {
+        NavigationManager.NavigateTo("/results");
+    }
+}
