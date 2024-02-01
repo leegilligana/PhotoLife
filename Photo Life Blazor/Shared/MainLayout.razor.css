@@ -32,6 +32,16 @@ main {
         text-overflow: ellipsis;
     }
 
+painted {
+    color: #c24aff;
+}
+
+.content {
+    display: flex;
+    height: calc(100vh - 3.5em);
+    overflow-y: auto;
+}
+
 @media (max-width: 640.98px) {
     .top-row:not(.auth) {
         display: none;
