@@ -1,7 +1,4 @@
-﻿@page "/download"
-@inject IJSRuntime JSRuntime
-
-<PageTitle>PhotoLife: New Album</PageTitle>
+﻿<PageTitle>PhotoLife: New Album</PageTitle>
 
 @* Title and Description *@
 <div class="text-center my-2">
@@ -10,23 +7,3 @@
     </h5>
 </div>
 <br />
-
-<div class="downloads">
-    <p>Folder Name</p>
-    <button @onclick="DownloadFolder"><span class="oi oi-data-transfer-download" aria-hidden="true"></span> Download</button>
-    <p>Folder Name</p>
-    <button @onclick="DownloadFolder"><span class="oi oi-data-transfer-download" aria-hidden="true"></span> Download</button>
-    <p>Folder Name</p>
-    <button @onclick="DownloadFolder"><span class="oi oi-data-transfer-download" aria-hidden="true"></span> Download</button>
-</div>
-
-
-@code {
-    private async Task DownloadFolder()
-    {
-        string folderPath = "/path/to/folder";
-        string zipPath = "/path/to/zipfile.zip";
-        await JSRuntime.InvokeVoidAsync("createZip", folderPath, zipPath);
-        await JSRuntime.InvokeVoidAsync("downloadFile", zipPath);
-    }
-}

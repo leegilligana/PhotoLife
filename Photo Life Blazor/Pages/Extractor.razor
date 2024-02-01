@@ -1,30 +1,52 @@
 ﻿@page "/extractor"
 @inject NavigationManager NavigationManager
 
-<PageTitle>PhotoLife: Metadata Extractor</PageTitle>
-@* Title and Description *@
-<div class="text-center my-2">
-    <h1>Image Metadata Extractor</h1>
-    <h5>Please upload a photo (of file extension .HEIC or .EXIF) of your own or pick a random one from Unsplash to
-        display metadata information for. Once you have your results, you'll be able to print them to a downloadable
-        PDF File(?). Only one photo can be uploaded and extracted at a time.
-    </h5>
-</div><br />
+<PageTitle>PhotoLife: Metadata Upload</PageTitle>
 
-@* Button Options *@
-<div class="text-center">
-    <div class="form-group d-inline-block mx-auto">
-        <button class="extr btn btn-outline-primary" @onclick="() => Modal.Open()">Upload Own Photo</button>
-    </div>
-    <div class="form-group d-inline-block mx-auto">
-        <button class="extr btn btn-outline-primary" @onclick="() => Loading.Open()">Use Random Unsplash Photo</button>
+<div class="text-center my-2">
+    <div class="sliding">
+        <div class="p-2 slide">
+            <h1>Step 1: Metadata Extractor</h1>
+            <h5>
+                Sign into your Google Drive to upload photos you would like to upload. Minimum of 2 photos and Maximum of {NUMBER} photos.
+                Create a folder called 'PhotoLife' and put all of the pictures you want to use in it for easier uploading.
+                Acceptable file types: {.jpg, .heic}
+            </h5>
+            <div class="login align-content-center justify-content-center">
+                SIGN INTO GOOGLE SPACE
+            </div>
+        </div>
+        <div class="p-2 slide delay">
+            <h1>Step 2: Analyzing The Data</h1>
+            <h5>
+                With the photos you uploaded, you can either: <br />
+                1) Generate Albums based on a certain category (such as location)
+                <br />OR<br />
+                2) Ask for a Profile that can tell you characteristics about the group of photos you selected. Please select an option below:
+            </h5>
+            <div class="container">
+                <div class="album">
+                    <div class="p-lg-4">
+                        <button class="btn btn-default btn-main" @onclick="NavigateToAlbum"><h4>Generate Album</h4></button>
+                    </div>
+                </div>
+                <div class="profile">
+                    <div class="p-lg-4">
+                        <button class="btn btn-default btn-main" @onclick="NavigateToProfile"><h4>Get Photos Profile</h4></button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<Modal @ref="Modal"></Modal>
-<Loading @ref="Loading"></Loading>
-
 @code {
-    private Modal Modal { get; set; }
-    private Loading Loading { get; set; }
+    private void NavigateToAlbum()
+    {
+        NavigationManager.NavigateTo("/album");
+    }
+    private void NavigateToProfile()
+    {
+        NavigationManager.NavigateTo("/profile");
+    }
 }

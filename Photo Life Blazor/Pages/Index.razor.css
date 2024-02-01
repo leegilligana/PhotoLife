@@ -1,0 +1,63 @@
+﻿.btn-main {
+	border: 4px #c24aff solid;
+	background-color: #c24aff;
+}
+
+.btn-main:hover {
+	border: 4px #c24aff solid;
+	background-color: #e4b0ff;
+}
+
+.sliding {
+	position: relative;
+}
+
+.slide {
+	position: relative;
+	top: -10em;
+	opacity: 0;
+	animation: slideIn 0.5s forwards;
+}
+
+.authors {
+	animation-delay: 0.3s;
+}
+
+@keyframes slideIn {
+	0% {
+		top: -10em;
+		opacity: 0;
+	}
+
+	50% {
+		top: -5em;
+		opacity: 0;
+	}
+
+	100% {
+		top: 0;
+		opacity: 1;
+	}
+}
+
+.fading {
+	position: relative;
+}
+
+.fade {
+	position: relative;
+	animation: fadeIn 0.4s ease-in-out forwards;
+	animation-delay: 1s;
+	opacity: 0;
+}
+
+
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}

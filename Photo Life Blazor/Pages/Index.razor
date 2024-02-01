@@ -1,42 +1,52 @@
 ﻿@page "/"
-@* @inject NavigationManager NavigationManager
- *@
-<!-- Turn this page into an intro page introducing comps, team and each section -->
-<!-- One Section For Extractor, One for Album Generation, and the Last for the Profile Maker -->
-<!-- Coordinate each section with what's on the screen and the buttons on home page that gets to each -->
-<!-- Album Generator will have a button and an option by which to sort it by (one album or many) -->
-<!-- ADD MORE COMMENTS TO EACH & ADD TO GITHUB -->
+@inject NavigationManager NavigationManager
 
 <PageTitle>2023/24 Comps: PhotoLife</PageTitle>
 
 <div class="text-center my-2">
-    <h1>THE CS DEPARTMENT PRESENTS: <br /> <b>PhotoLife Comps</b></h1>
-    <br />
-    <h6><i>Brought to you by Seniors: Sunny Kim, Alejandro Gonzalez, Peyton Bass, Aidan Lee-Gilligan, & T'airra Champliss.</i></h6>
-    <br />
-    <p>Welcome to the PhotoLife Comps! Our team embarked on this project to address ethical concerns surrounding the use of metadata and see what
-        could be done with the personal metadata stored in the images we take and utilize everyday. By examining the metadata associated with each
-        photo, we sought to develop an algorithm capable of making predictions about the authors and collections we had stored. We planned to use 
-        this algorithm to create unique photo albums reflecting these predictions. Through further analysis of these photo albums, our intention
-        was to build comprehensive profiles for each team member. These profiles would suggest themes related to our identities, personalities, 
-        schedules, and other significant aspects of our lives.
-        This app is divided into three sections:<br />
-        <u>Part One: Metadata Extractor.</u><br />
-        <u>Part Two: Album Generator.</u><br />
-        <u>Part Three: Profile Maker.</u><br /></p>
+    <div class="sliding">
+        <h1 class="slide">THE CS DEPARTMENT PRESENTS: <br /> <b>PhotoLife Comps</b></h1>
         <br />
-    <br />
-    <h4>Ethics & Uses of Data: </h4>
-    <p>
-        First and foremost, we emphasize the utmost respect for user privacy and data protection. We recognize the sensitive nature of image metadata
-        and handle it with great care, ensuring it is collected and processed securely, and only used for its intended purposes. We strictly adhere to
-        applicable laws, regulations, and industry best practices to guarantee the privacy and confidentiality of our users.
-        Transparency is another key aspect of our mission. We strive to provide clear and concise information to our users regarding the utilization of 
-        image metadata within our algorithms. We believe that transparency fosters trust and allows users to make informed decisions about their data. 
-        Our users have the right to know how their information is being utilized, and we make every effort to keep you all well-informed.
-        Additionally, we maintain a strong commitment to the responsible and ethical use of image metadata. We actively engage in ethical discussions
-        and consulted our comps advisor to ensure that our utilization of this data aligns with the values and expectations of our users and society at large.
-        We prioritize the positive impact of our algorithms, while minimizing any potential negative consequences.
-        Our mission is to continue to prioritize ethics throughout the entire process of utilizing this data within our algorithms.
-    </p>
+        <h6 class="slide authors"><i>Brought to you by Seniors: Sunny Kim, Alejandro Gonzalez, Peyton Bass, Aidan Lee-Gilligan, & T'airra Champliss.</i></h6>
+        <br />
+    </div>
+    <div class="fading">
+        <p class="fade">
+            Welcome to the PhotoLife Comps! Our team embarked on this project to address ethical concerns surrounding the use of metadata and exemplify what
+            could be done with the personal metadata stored in the images we take and utilize everyday. By examining the metadata associated with each
+            photo, we sought to develop an algorithm capable of making predictions about the authors and collections we had stored. We planned to use
+            this algorithm to create unique photo albums reflecting these predictions. Through further analysis of these photo albums, our intention
+            was to build comprehensive profiles for each team member. These profiles would suggest themes related to our identities, personalities,
+            schedules, and other significant aspects of our lives.
+            This app is divided into three sections:<br />
+            <u>Part One: Metadata Extractor.</u><br />
+            <u>Part Two, Option One: Album Generator.</u><br />
+            <u>Part Two, Option Two: Profile Maker.</u><br />
+        </p>
+        <br />
+        <h4 class="fade">Ethics & Uses of Data: </h4>
+        <p class="fade">
+            First and foremost, we emphasize the utmost respect for user privacy and data protection. We recognize the sensitive nature of image metadata
+            and handle it with great care, ensuring it is collected and processed securely, and only used for its intended purposes. We strictly adhere to
+            applicable laws, regulations, and industry best practices to guarantee the privacy and confidentiality of our users.
+            Transparency is another key aspect of our mission. We strive to provide clear and concise information to our users regarding the utilization of
+            image metadata within our algorithms. We believe that transparency fosters trust and allows users to make informed decisions about their data.
+            Our users have the right to know how their information is being utilized, and we make every effort to keep you all well-informed.
+            Additionally, we maintain a strong commitment to the responsible and ethical use of image metadata. We actively engage in ethical discussions
+            and consulted our comps advisor to ensure that our utilization of this data aligns with the values and expectations of our users and society at large.
+            We prioritize the positive impact of our algorithms, while minimizing any potential negative consequences.
+            Our mission is to continue to prioritize ethics throughout the entire process of utilizing this data within our algorithms.
+        </p>
+        <div class="p-lg-4 fade">
+            <button class="btn btn-default btn-main" @onclick="NavigateToUpload">Upload Photos</button>
+        </div>
+    </div>
 </div>
+
+@code {
+    private void NavigateToUpload()
+    {
+        NavigationManager.NavigateTo("/extractor");
+    }
+}
+

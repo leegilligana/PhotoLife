@@ -1,0 +1,56 @@
+﻿.sliding {
+    position: relative;
+}
+
+.slide {
+    position: relative;
+    top: -10em;
+    opacity: 0;
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    0% {
+        top: -10em;
+        opacity: 0;
+    }
+
+    30% {
+        top: -5em;
+        opacity: 0;
+    }
+
+    100% {
+        top: 0;
+        opacity: 1;
+    }
+}
+
+.login {
+    height: 350px;
+    width: 300px;
+    margin: 10px auto;
+    border: 3px #c24aff solid;
+}
+
+.album, .profile {
+    margin: 10px auto 40px auto;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-main {
+    border: 4px #c24aff solid;
+    background-color: #c24aff;
+    padding: 4%;
+    width: 16em;
+    height: 6em;
+}
+
+.btn-main:hover {
+    border: 4px #c24aff solid;
+    background-color: #e4b0ff;
+}

@@ -1,4 +1,4 @@
-﻿@page "/maker"
+﻿@page "/profile"
 @inject NavigationManager NavigationManager
 
 <PageTitle>PhotoLife: Profile Maker</PageTitle>
@@ -6,82 +6,12 @@
 @* Title and Description *@
 <div class="text-center my-2">
     <h1>Profile Maker</h1>
-    <h5>Please upload a minimum of * photos (of file extension .HEIC or .EXIF) to generate a profile based on the photos
+    <h5>
+        Please upload a minimum of * photos (of file extension .HEIC or .EXIF) to generate a profile based on the photos
         you selected. Each profile is unique to the photos you selected and can be based on: photo style, frequency of photos,
         frequency of location shots, etc. Number of photos should not exceed * files.
     </h5>
 </div>
-<br />
-
-@* Upload Files and Pick Option *@
-<div class="text-center">
-    <form method="post" enctype="multipart/form-data">
-        <div class="form-group d-inline-block mx-auto">
-            <InputFile OnChange="OnFileChange" accept=".heic, .exif" multiple required ></InputFile>
-        </div><br />
-        @foreach (String file in fileNames)
-        {
-            <p>Uploaded File: @file</p>
-        }
-        <input type="submit" class="gen btn btn-primary" value="Get Profile" onsubmit="HandleFileUpload"/>
-	</form>
-</div>
 
 @code {
-    private List<IBrowserFile> selectedFiles = new List<IBrowserFile>();
-    private List<string> fileNames = new List<string>();
-    private int numberOfInputFiles = 1;
-
-    private string GetInputFileNum(int index)
-    {
-        return index == numberOfInputFiles - 1 ? "" : "display: none";
-    }
-
-    private async Task OnFileChange(InputFileChangeEventArgs e)
-    {
-        if (numberOfInputFiles != 1)
-        {
-            fileNames.Clear();
-        }
-        await UploadNew(e);
-    }
-
-    @* Display Selected Files to User *@
-    private async Task UploadNew(InputFileChangeEventArgs e)
-    {
-        numberOfInputFiles++;
-
-        try
-        {
-            var buffer = new byte[4096];
-            foreach (var file in e.GetMultipleFiles(e.FileCount))
-            {
-                using var stream = file.OpenReadStream(maxAllowedSize: long.MaxValue);
-                while (true)
-                {
-                    var read = await stream.ReadAsync(buffer);
-                    if (read == 0)
-                        break;
-                }
-
-                fileNames.Add(file.Name);
-                await InvokeAsync(StateHasChanged);
-            }
-        }
-        catch (Exception ex)
-        {
-            fileNames.Add("Error Uploading File! Try another upload.");
-            await InvokeAsync(StateHasChanged);
-        }
-    }
-
-    @* Connect to backend/API endpoint *@
-    private async Task HandleFileUpload(InputFileChangeEventArgs e)
-    {
-        selectedFiles = new List<IBrowserFile>(e.GetMultipleFiles());
-        foreach (var file in selectedFiles)
-        {
-            /*Perform the rest of upload*/
-        }
-    }
 }
