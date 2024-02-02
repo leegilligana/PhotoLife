@@ -4,4 +4,5 @@ Photo Life Blazor/bin/Debug/net6.0/Photo Life Blazor.pdb
 Photo Life Blazor/bin/
 Photo Life Blazor/obj/
 Photo Life Blazor/Constants.cs
-metadata_extractor\bin\Debug\net6.0\appsettings.json
+metadata_extractor/bin/
+metadata_extractor/obj/
