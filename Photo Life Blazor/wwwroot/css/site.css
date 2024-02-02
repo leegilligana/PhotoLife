@@ -1,7 +1,43 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500&display=swap');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Quicksand', sans-serif;
+}
+
+p {
+    margin: auto 44px;
+    font-size: 20px;
+}
+
+h5 {
+    margin: 18px 200px;
+}
+
+h1 {
+    margin-top: 33px;
+}
+
+h6 {
+    color: #22333B;
+}
+
+button, input {
+    margin: auto 22px 11px 22px;
+    font-size: 18px;
+}
+
+.extr {
+    height: 4em;
+    width: 16em;
+}
+
+
+.gen {
+    height: 3em;
+    width: 8em;
+    color: #22333B;
+    margin: 18px auto;
 }
 
 h1:focus {
@@ -16,6 +52,10 @@ a, .btn-link {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -62,3 +102,27 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+/* For Webkit browsers (Chrome, Safari, etc.) */
+::-webkit-scrollbar {
+    width: 1.2em;
+    top: 3.5em;
+    background-color: #EAE0D5;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c24aff;
+    border-radius: 10px;
+}
+
+/* For Firefox, Microsoft Edge and Internet Explorer */
+::-moz-scrollbar {
+    width: 1.2em;
+    top: 3.5em;
+    background-color: #EAE0D5;
+}
+
+::-moz-scrollbar-thumb {
+    background-color: #c24aff;
+    border-radius: 10px;
+}
