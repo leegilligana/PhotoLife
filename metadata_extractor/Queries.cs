@@ -204,6 +204,13 @@ namespace DB_Queries
 			return DataReader(cmd.ExecuteReader());
 		}
 
+		public void deleteAll(string user)
+		{
+			var cmd = new NpgsqlCommand("DELETE FROM test3 where Owner = @user;", conn);
+			cmd.Parameters.AddWithValue("user", user);
+			cmd.ExecuteNonQuery();
+		}
+
 		public string[] DataReader(NpgsqlDataReader reader)
 		{
 			var list = new List<string>();
