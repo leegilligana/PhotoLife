@@ -15,6 +15,7 @@ namespace Photo_Life_Blazor
             builder.Services.AddServerSideBlazor();
             builder.Services.AddSingleton<WeatherForecastService>();
             builder.Services.AddSingleton<UnsplashService>();
+            builder.Services.AddSingleton<GoogleService>();
 
             var app = builder.Build();
 

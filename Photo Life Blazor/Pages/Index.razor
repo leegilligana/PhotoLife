@@ -1,5 +1,7 @@
-﻿@page "/"
+﻿@using Photo_Life_Blazor.Services
+@page "/"
 @inject NavigationManager NavigationManager
+@inject GoogleService GoogleServices
 
 <PageTitle>2023/24 Comps: PhotoLife</PageTitle>
 
@@ -49,4 +51,3 @@
         NavigationManager.NavigateTo("/extractor");
     }
 }
-

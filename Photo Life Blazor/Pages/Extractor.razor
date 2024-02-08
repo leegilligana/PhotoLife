@@ -1,5 +1,7 @@
-﻿@page "/extractor"
+﻿@using Photo_Life_Blazor.Services
+@page "/extractor"
 @inject NavigationManager NavigationManager
+@inject GoogleService GoogleServices
 
 <PageTitle>PhotoLife: Metadata Upload</PageTitle>
 
@@ -13,7 +15,7 @@
                 Acceptable file types: {.jpg, .heic}
             </h5>
             <div class="login align-content-center justify-content-center">
-                SIGN INTO GOOGLE SPACE
+                <button @onclick="googleDrive">Google Drive</button>
             </div>
         </div>
         <div class="p-2 slide delay">
@@ -41,6 +43,10 @@
 </div>
 
 @code {
+    private void googleDrive()
+    {
+        GoogleServices.getUserPhotos();
+    }
     private void NavigateToAlbum()
     {
         NavigationManager.NavigateTo("/album");
