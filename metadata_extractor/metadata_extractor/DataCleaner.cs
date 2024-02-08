@@ -6,8 +6,8 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using static Unsplasharp.UnsplasharpClient;
-using Unsplasharp.Models;
+//using static Unsplasharp.UnsplasharpClient;
+//using Unsplasharp.Models;
 
 
 namespace metadata_extractor
