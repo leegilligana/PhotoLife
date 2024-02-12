@@ -64,7 +64,7 @@ namespace metadata_extractor
         {
             var arr1 = noQuote(data, noQuoteList);
             var arr2 = withQuote(data, quoteList);
-            var command = $"INSERT INTO test3 (Owner, {arr1[0] + arr2[0]}) VALUES " +
+            var command = $"INSERT INTO photolife (Owner, {arr1[0] + arr2[0]}) VALUES " +
                         $"('@owner', {arr1[1] + arr2[1]});";
             Console.WriteLine(command);
             using (var cmd = new NpgsqlCommand(
