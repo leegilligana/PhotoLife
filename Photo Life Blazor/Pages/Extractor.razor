@@ -14,8 +14,8 @@
                 Create a folder called 'PhotoLife' and put all of the pictures you want to use in it for easier uploading.
                 Acceptable file types: {.jpg, .heic}
             </h5>
-            <div class="login align-content-center justify-content-center">
-                <button @onclick="googleDrive">Google Drive</button>
+            <div class="align-content-center justify-content-center">
+                <button class="btn btn-default btn-main" @onclick="googleDrive" style="font-size: 22px;">Sign Into Google</button>
             </div>
         </div>
         <div class="p-2 slide delay">
@@ -34,7 +34,7 @@
                 </div>
                 <div class="profile">
                     <div class="p-lg-4">
-                        <button class="btn btn-default btn-main" @onclick="NavigateToProfile"><h4>Get Photos Profile</h4></button>
+                        <button class="btn btn-default btn-main" @onclick="NavigateToProfile"><h4>Generate Profile</h4></button>
                     </div>
                 </div>
             </div>
@@ -43,9 +43,9 @@
 </div>
 
 @code {
-    private void googleDrive()
+    private async void googleDrive()
     {
-        GoogleServices.getUserPhotos();
+        await GoogleServices.getUserPhotos();
     }
     private void NavigateToAlbum()
     {

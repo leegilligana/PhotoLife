@@ -1,29 +1,51 @@
 ﻿@page "/album"
 @inject NavigationManager NavigationManager
 
-<PageTitle>PhotoLife: Metadata Upload</PageTitle>
+<PageTitle>PhotoLife: Album Generator</PageTitle>
 
-<div class="text-center">
+@* Title and Description *@
+<div class="text-center" id="no-scroll-bar">
     <div class="text-center my-2">
         <h1>Album</h1>
         <h5>Choose one of the options below as a category to create new albums with your photos.</h5>
     </div>
     <div>
         <label for="Select Category:">
-            <InputSelect @bind-Value="selectedOption">
-                <option value="">--</option>
-                <option value="tags">Tags</option>
-                <option value="location">Location</option>
-                <option value="timeOfDay">Time Of Day</option>
-            </InputSelect>
+            <select @bind="selectedOption">
+                <option value="">--Please choose an option--</option>
+                <option value="Tags">Tags</option>
+                <option value="Location">Location</option>
+                <option value="Time Of Day">Time (Of Day)</option>
+            </select>
         </label>
     </div>
-    @if (selectedOption != "")
+    <div class="p-lg-4">
+        <button class="btn btn-default btn-main" @onclick="Success"><h4>Generate</h4></button>
+    </div>
+    @if (Done == true)
     {
-        <p>@selectedOption</p>
+        <p>Success! We have processed your photos and sorted them by @selectedOption. Please check your Drive for the new Album(s).</p>
+    }
+    @if (noOption == true)
+    {
+        <p>You must choose an option to run the album generator algorithm.</p>
     }
 </div>
 
 @code {
     private string selectedOption = "";
+    private Boolean noOption = false;
+    private Boolean Done = false;
+
+    private void Success()
+    {
+        if (selectedOption != "")
+        {
+            noOption = false;
+            Done = true;
+        } else
+        {
+            noOption = true;
+        }
+    }
 }

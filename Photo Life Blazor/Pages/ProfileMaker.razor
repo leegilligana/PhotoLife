@@ -1,17 +1,74 @@
 ﻿@page "/profile"
 @inject NavigationManager NavigationManager
+@using System.Collections.Generic
+
 
 <PageTitle>PhotoLife: Profile Maker</PageTitle>
 
 @* Title and Description *@
-<div class="text-center my-2">
-    <h1>Profile Maker</h1>
-    <h5>
-        Please upload a minimum of * photos (of file extension .HEIC or .EXIF) to generate a profile based on the photos
-        you selected. Each profile is unique to the photos you selected and can be based on: photo style, frequency of photos,
-        frequency of location shots, etc. Number of photos should not exceed * files.
-    </h5>
+<div class="text-center" id="no-scroll-bar">
+    <div class="text-center my-2">
+        <h1>Profile Maker</h1>
+        <h5>Select Presets on Information we can gather from the photos you submitted.</h5>
+    </div>
+    <div class="container">
+        <label for="Pick Options:">
+            @foreach (var preset in options)
+            {
+                <input type="checkbox" checked="@preset.isChecked" @onchange="e => UpdateSelection(preset)" /> @preset.Name
+                <br />
+            }
+        </label>
+    </div>
+    <div class="p-lg-4">
+        <button class="btn btn-default btn-main" @onclick="AddSelectedPresets"><h4>Get My Profile!</h4></button>
+    </div>
+    @if (noOptions == true)
+    {
+        <p>You must choose at least one option to run the profile maker algorithm.</p>
+    }
+    @* <h3>Selected Presets:</h3>
+    @foreach (var preset in selectedPresets)
+    {
+        <p>@preset.Name</p>
+    } *@
 </div>
 
 @code {
+    // [Parameter]
+    // private string userEmail { get; set; };
+    private Boolean noOptions = false;
+
+    public class PresetOption
+    {
+        public string Name { get; set; }
+        public bool isChecked { get; set; }
+    }
+    private List<PresetOption> options = new List<PresetOption>
+    {
+        new PresetOption { Name = "Time", isChecked = false },
+        new PresetOption { Name = "GPS", isChecked = false },
+        new PresetOption { Name = "Camera Model", isChecked = false }
+    };
+
+    private List<PresetOption> selectedPresets = new List<PresetOption>();
+
+    private void UpdateSelection(PresetOption option)
+    {
+        option.isChecked = !option.isChecked;
+    }
+
+    private void AddSelectedPresets()
+    {
+        @*if (selectedPresets.Count == 0)
+        {
+            noOptions = true;
+        } else
+        {
+            noOptions = false;*@
+            selectedPresets = options.Where(f => f.isChecked).ToList();
+            // Thread.Sleep(2000);
+            NavigationManager.NavigateTo("/profile_results");
+            // NavigationManager.NavigateTo($"/profile_results?user={userEmail}");
+    }
 }
