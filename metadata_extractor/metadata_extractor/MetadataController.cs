@@ -165,5 +165,19 @@ namespace metadata_extractor.Controllers
             Queries queries = new Queries(Constants.connString, responseModel.username);
             return queries.GPSHorizontalPositioningError(responseModel.inputGPSHorizontalPositioningError);
         }
+
+        [HttpPost("[action]")]
+        public string[] finalResult([FromBody] ResponseModel responseModel)
+        {
+			Queries queries = new Queries(Constants.connString, responseModel.username);
+			return queries.finalResult(responseModel.inputFinalResult);
+		}
+
+        [HttpPost("[action]")]
+        public string[] getAll([FromBody] ResponseModel responseModel)
+        {
+			Queries queries = new Queries(Constants.connString, responseModel.username);
+			return queries.getAll();
+		}
     }
 }

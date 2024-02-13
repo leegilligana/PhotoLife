@@ -228,10 +228,17 @@ namespace DB_Queries
 
         public void deleteAll()
         {
-            var cmd = new NpgsqlCommand("DELETE FROM photolife where owner = @owner;", conn);
+            var cmd = new NpgsqlCommand("DELETE FROM photolife WHERE owner = @owner;", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             cmd.ExecuteNonQuery();
         }
+
+        public string[] getAll()
+        {
+			var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner;", conn);
+			cmd.Parameters.AddWithValue("owner", owner);
+			return DataReader(cmd.ExecuteReader());
+		}
 
         public string[] DataReader(NpgsqlDataReader reader)
         {
@@ -243,5 +250,13 @@ namespace DB_Queries
             reader.Close();
             return list.ToArray();
         }
-    }
-}
+
+		public string[] finalResult(string[][] allResults)
+		{
+			for (int n = 0; n < allResults.Length; n++)
+			{
+				allResults[0] = allResults[0].Intersect(allResults[n]).ToArray();
+			}
+			return allResults[0];
+		}
+	}

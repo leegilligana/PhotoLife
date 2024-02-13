@@ -31,6 +31,8 @@ namespace metadata_extractor.Models
         public double inputGPSAltitude { get; set; }
         public double inputGPSImgDirection { get; set; }
         public double inputGPSHorizontalPositioningError { get; set; }
+
+        public string[][] inputFinalResult { get; set; }
     }
     //public class PhotoMetaData
     //{
