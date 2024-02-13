@@ -22,7 +22,7 @@ namespace metadata_extractor.Controllers
             var listOfFilteredPhotos = new List<List<string>>();
             
             Type typeResponseModel = responseModel.GetType();
-        
+       
             foreach (PropertyDescriptor field in TypeDescriptor.GetProperties(typeResponseModel)) { 
                 if (field.GetValue(responseModel) != null && field.Name != "username")
                 {

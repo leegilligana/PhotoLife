@@ -92,7 +92,7 @@ namespace DB_Queries
 
         public string[] Width(int width)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND image_width = @width;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND image_width = @width;", conn);
             cmd.Parameters.AddWithValue("width", width);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -259,7 +259,8 @@ namespace DB_Queries
                 allResults[0] = allResults[0].Intersect(allResults[n]).ToArray();
             }
 
-            if (allResults.Count() == 0) {
+            if (allResults.Count() == 0)
+            {
                 return System.Array.Empty<String>();
             }
             return allResults[0];
