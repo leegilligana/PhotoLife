@@ -6,9 +6,17 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.Drive.v3;
 using Google.Apis.Download;
+using Google.Apis.Gmail.v1.Data;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Authentication;
+using Google.Apis.Oauth2;
+using System.Net;
+using Google.Apis.Oauth2.v2.Data;
+using Google.Apis.Gmail.v1;
+using Google.Apis.PeopleService.v1;
+using Google.Apis.Oauth2.v2;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -16,23 +24,41 @@ namespace Photo_Life_Blazor.Services
     {
         UserCredential? credential;
         DriveService? driveService;
+        string? username;
         public async Task setUp()
         {
+            Console.WriteLine("Setting up");
             credential ??= await GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {
                     ClientId = Constants.ClientID,
                     ClientSecret = Constants.ClientSecret
                 },
-                new[] { DriveService.Scope.Drive },
+                new[] {
+                    DriveService.Scope.Drive,
+                    Oauth2Service.Scope.UserinfoEmail,
+                    Oauth2Service.Scope.UserinfoProfile,
+                    Oauth2Service.Scope.Openid
+                },
                 "user",
                 CancellationToken.None,
-                new FileDataStore("PhotoLife"));
-            driveService = new DriveService(new BaseClientService.Initializer
+                new FileDataStore("PhotoLife")) ;
+            driveService ??= new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
                 ApplicationName = "PhotoLife"
             });
+            if (username == null)
+            {
+                Oauth2Service userInfoService = new Oauth2Service(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "PhotoLife"
+                });
+                var userInfo = await userInfoService.Userinfo.Get().ExecuteAsync();
+                username = userInfo.Email;
+                Console.WriteLine(username);
+            }
         }
         public async Task<List<string>> getFileIds()
         {
@@ -94,6 +120,7 @@ namespace Photo_Life_Blazor.Services
         }
         public async Task<int> writeStreamstoFile(List<MemoryStream> streams, List<string> Ids)
         {
+            Console.WriteLine("Writing Files");
             for (int i = 0; i < Ids.Count; i++)
             {
                 var path = System.IO.Directory.GetCurrentDirectory();

@@ -15,7 +15,7 @@
                 Acceptable file types: {.jpg, .heic}
             </h5>
             <div class="login align-content-center justify-content-center">
-                <button @onclick="googleDrive">Google Drive</button>
+                <button @onclick="@googleDrive">Google Drive</button>
             </div>
         </div>
         <div class="p-2 slide delay">
@@ -43,9 +43,10 @@
 </div>
 
 @code {
-    private void googleDrive()
+    private async Task googleDrive()
     {
-        GoogleServices.getUserPhotos();
+        Console.WriteLine("Google Drive");
+        await GoogleServices.getUserPhotos();
     }
     private void NavigateToAlbum()
     {
