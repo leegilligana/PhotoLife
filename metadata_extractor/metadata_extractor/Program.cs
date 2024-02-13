@@ -9,20 +9,6 @@ namespace ConsoleToWebAPI
     {
         static void Main(string[] args)
         {
-            //open connection with database
-
-            //IConfigurationRoot config = new ConfigurationBuilder()
-            //    .AddJsonFile("appsettings.json")
-            //    .AddEnvironmentVariables()
-            //    .Build();
-
-            //var settings = config.GetRequiredSection("ConnString").Get<Dictionary<string, string>>();
-
-            //var connString = $"Host={settings["Host"]};Username={settings["Username"]};" +
-            //    $"Password={settings["Password"]};Database={settings["Database"]}";
-
-            Console.WriteLine(Constants.connString);
-
             CreateHostBuilder(args).Build().Run();
         }
 
