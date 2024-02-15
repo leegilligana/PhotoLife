@@ -17,6 +17,7 @@ using Google.Apis.Oauth2.v2.Data;
 using Google.Apis.Gmail.v1;
 using Google.Apis.PeopleService.v1;
 using Google.Apis.Oauth2.v2;
+using Google.Apis.PeopleService.v1.Data;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -25,6 +26,7 @@ namespace Photo_Life_Blazor.Services
         UserCredential? credential;
         DriveService? driveService;
         string? username;
+        string folderID = "default";
         public async Task setUp()
         {
             Console.WriteLine("Setting up");
@@ -59,12 +61,31 @@ namespace Photo_Life_Blazor.Services
                 username = userInfo.Email;
                 Console.WriteLine(username);
             }
+            if (folderID == "default") {
+                List<string> folderId = new List<string>();
+                var request = driveService.Files.List();
+                request.Q = "mimeType = 'application/vnd.google-apps.folder' and trashed = false and name = 'PhotoLife'";
+                var fileList = await request.ExecuteAsync();
+                foreach (var file in fileList.Files)
+                {
+                    folderId.Add(file.Id);
+                }
+                if (folderId.Any())
+                {
+                    folderID = folderId[0];
+                    Console.WriteLine(folderID);
+                }
+                else
+                {
+                    Console.WriteLine("OOOPIES");
+                }
+            }
         }
         public async Task<List<string>> getFileIds()
         {
             List<string> fileIds = new List<string>();
             var request = driveService.Files.List();
-            request.Q = "mimeType contains \'image/\'";
+            request.Q = "mimeType contains 'image/' and trashed = false and '" + folderID + "' in parents";
             var fileList = await request.ExecuteAsync();
             foreach (var file in fileList.Files)
             {
@@ -80,10 +101,6 @@ namespace Photo_Life_Blazor.Services
             {
                 var request = driveService.Files.Get(id);
                 var stream = new MemoryStream();
-
-                // Add a handler which will be notified on progress changes.
-                // It will notify on each chunk download and when the
-                // download is completed or failed.
                 request.MediaDownloader.ProgressChanged +=
                     progress =>
                     {
