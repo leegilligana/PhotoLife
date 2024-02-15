@@ -1,0 +1,31 @@
+owner: Alejandro
+image_width: 4032
+image_height: 3024
+media_white_point: System.Double[]
+red_colorant: System.Double[]
+green_colorant: System.Double[]
+blue_colorant: System.Double[]
+model: iPhone 14 Plus
+orientation: Right side, top (Rotate 90 CW)
+x_resolution: 72
+y_resolution: 72
+software: 17.1.2
+date_time: 1/2/2024 9:48:31 AM
+exposure_time: 0.01
+exif_version: 2.32
+time_zone: 
+shutter_speed_value: 0
+brightness_value: 3.818
+flash: False
+scene_type: Directly photographed image
+exposure_mode: Auto exposure
+lens_model: iPhone 14 Plus back dual wide camera 5.7mm f/1.5
+gps_coordinates: 
+gps_altitude: 
+gps_img_direction: 
+gps_horizontal_positioning_error: 
+detected_file_type_name: HEIC
+file_name: IMG_9450.HEIC
+file_size: 1448415
+file_modified_date: 
+
