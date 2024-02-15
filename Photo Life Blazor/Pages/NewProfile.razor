@@ -1,0 +1,49 @@
+﻿@page "/profile_results"
+
+<PageTitle>PhotoLife: New Profile</PageTitle>
+
+@* Title and Description *@
+<div class="text-center my-2">
+    <h1>New Profile Generated! <br /> Here are some stats about the photos you provided:</h1>
+
+    @if (TimeOfDay != "")
+    {
+        <div>
+            <h3>Your photos were most likely taken in the:</h3>
+            <h5>@TimeOfDay</h5>
+        </div>
+    }
+
+    @if (WeekDay != "")
+    {
+        <div>
+            <h3>The day of the week that your photos were probably taken on:</h3>
+            <h5>@WeekDay</h5>
+        </div>
+    }
+
+    @if (GPS != "")
+    {
+        <div>
+            <h3>Your most frequent photo location is:</h3>
+            <h5>@GPS</h5>
+        </div>
+    }
+
+    @if (CameraModel != "")
+    {
+        <div>
+            <h3>Your most used Camera Model is:</h3>
+            <h5>@CameraModel</h5>
+        </div>
+    }
+</div>
+
+@code {
+    private string TimeOfDay = "", WeekDay = "", GPS = "", CameraModel = "";
+
+    private void GetStats()
+    {
+        
+    }
+}

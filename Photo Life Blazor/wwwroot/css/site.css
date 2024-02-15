@@ -58,6 +58,16 @@ a, .btn-link {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+.btn-main {
+    border: 4px #c24aff solid;
+    background-color: #c24aff;
+}
+
+.btn-main:hover {
+    border: 4px #c24aff solid;
+    background-color: #e4b0ff;
+}
+
 .content {
     padding-top: 1.1rem;
 }
