@@ -6,9 +6,18 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.Drive.v3;
 using Google.Apis.Download;
+using Google.Apis.Gmail.v1.Data;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Authentication;
+using Google.Apis.Oauth2;
+using System.Net;
+using Google.Apis.Oauth2.v2.Data;
+using Google.Apis.Gmail.v1;
+using Google.Apis.PeopleService.v1;
+using Google.Apis.Oauth2.v2;
+using Google.Apis.PeopleService.v1.Data;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -16,29 +25,67 @@ namespace Photo_Life_Blazor.Services
     {
         UserCredential? credential;
         DriveService? driveService;
+        string? username;
+        string folderID = "default";
         public async Task setUp()
         {
+            Console.WriteLine("Setting up");
             credential ??= await GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {
                     ClientId = Constants.ClientID,
                     ClientSecret = Constants.ClientSecret
                 },
-                new[] { DriveService.Scope.Drive },
+                new[] {
+                    DriveService.Scope.Drive,
+                    Oauth2Service.Scope.UserinfoEmail,
+                    Oauth2Service.Scope.UserinfoProfile,
+                    Oauth2Service.Scope.Openid
+                },
                 "user",
                 CancellationToken.None,
-                new FileDataStore("PhotoLife"));
-            driveService = new DriveService(new BaseClientService.Initializer
+                new FileDataStore("PhotoLife")) ;
+            driveService ??= new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
                 ApplicationName = "PhotoLife"
             });
+            if (username == null)
+            {
+                Oauth2Service userInfoService = new Oauth2Service(new BaseClientService.Initializer
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = "PhotoLife"
+                });
+                var userInfo = await userInfoService.Userinfo.Get().ExecuteAsync();
+                username = userInfo.Email;
+                Console.WriteLine(username);
+            }
+            if (folderID == "default") {
+                List<string> folderId = new List<string>();
+                var request = driveService.Files.List();
+                request.Q = "mimeType = 'application/vnd.google-apps.folder' and trashed = false and name = 'PhotoLife'";
+                var fileList = await request.ExecuteAsync();
+                foreach (var file in fileList.Files)
+                {
+                    folderId.Add(file.Id);
+                }
+                if (folderId.Any())
+                {
+                    folderID = folderId[0];
+                    Console.WriteLine(folderID);
+                }
+                else
+                {
+                    Console.WriteLine("OOOPIES");
+                }
+            }
         }
         public async Task<List<string>> getFileIds()
         {
             List<string> fileIds = new List<string>();
             var request = driveService.Files.List();
-            request.Q = "mimeType contains \'image/\'";
+            request.Q = "mimeType contains 'image/' and trashed = false and '" + folderID + "' in parents";
             var fileList = await request.ExecuteAsync();
             foreach (var file in fileList.Files)
             {
@@ -54,10 +101,6 @@ namespace Photo_Life_Blazor.Services
             {
                 var request = driveService.Files.Get(id);
                 var stream = new MemoryStream();
-
-                // Add a handler which will be notified on progress changes.
-                // It will notify on each chunk download and when the
-                // download is completed or failed.
                 request.MediaDownloader.ProgressChanged +=
                     progress =>
                     {
@@ -94,11 +137,12 @@ namespace Photo_Life_Blazor.Services
         }
         public async Task<int> writeStreamstoFile(List<MemoryStream> streams, List<string> Ids)
         {
+            Console.WriteLine("Writing Files");
             for (int i = 0; i < Ids.Count; i++)
             {
                 var path = System.IO.Directory.GetCurrentDirectory();
                 FileStream file = File.Create(path + "\\Photos\\" + Ids[i]);
-                streams[i].CopyTo(file);
+                await streams[i].CopyToAsync(file);
                 file.Close();
             }
             return 1;
@@ -119,6 +163,20 @@ namespace Photo_Life_Blazor.Services
             foreach (var directory in directories)
                 foreach (var tag in directory.Tags)
                     Console.WriteLine($"{directory.Name} - {tag.Name} = {tag.Description}");
+        }
+        public async Task<string> createFolder(string folderName)
+        {
+            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            {
+                Name = folderName,
+                MimeType = "application/vnd.google-apps.folder"
+            };
+            var request = driveService.Files.Create(fileMetadata);
+            request.Fields = "id";
+            var file = await request.ExecuteAsync();
+            // Prints the created folder id.
+            Console.WriteLine("Folder ID: " + file.Id);
+            return file.Id;
         }
         public async Task getUserPhotos()
         {

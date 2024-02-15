@@ -51,6 +51,10 @@
 </div>
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        await GoogleServices.setUp();
+    }
     private void NavigateToUpload()
     {
         NavigationManager.NavigateTo("/extractor");
