@@ -178,12 +178,30 @@ namespace Photo_Life_Blazor.Services
             Console.WriteLine("Folder ID: " + file.Id);
             return file.Id;
         }
+        public async Task movePhotos(List<string> PhotoIds, string folderId)
+        {
+            foreach (var id in PhotoIds)
+            {
+                var copyRequest = driveService.Files.Copy(null, id);
+                copyRequest.Fields = "id";
+                var newId = await copyRequest.ExecuteAsync();
+                var request = driveService.Files.Update(null,newId.Id);
+                request.AddParents = folderId;
+                await request.ExecuteAsync();
+            }
+        }
         public async Task getUserPhotos()
         {
             await setUp();
             var ids = await getFileIds();
             var memoryStreams = await downloadFiles(ids);
             var fileCreation = await writeStreamstoFile(memoryStreams, ids);
+            var folder = await createFolder("testing");
+            await movePhotos(ids, folder);
+            if (fileCreation == 1)
+            {
+                deleteFiles(ids);
+            }
         }
     }
 }
