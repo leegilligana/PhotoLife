@@ -5,7 +5,7 @@
 
 <PageTitle>2023/24 Comps: PhotoLife</PageTitle>
 
-<div class="text-center my-2">
+<div class="text-center" style="margin: 0 4em 1.4em 4em;">
     <div class="sliding">
         <h1 class="slide">THE CS DEPARTMENT PRESENTS: <br /> <b>PhotoLife Comps</b></h1>
         <br />
@@ -14,31 +14,36 @@
     </div>
     <div class="fading">
         <p class="fade">
-            Welcome to the PhotoLife Comps! Our team embarked on this project to address ethical concerns surrounding the use of metadata and exemplify what
-            could be done with the personal metadata stored in the images we take and utilize everyday. By examining the metadata associated with each
-            photo, we sought to develop an algorithm capable of making predictions about the authors and collections we had stored. We planned to use
-            this algorithm to create unique photo albums reflecting these predictions. Through further analysis of these photo albums, our intention
-            was to build comprehensive profiles for each team member. These profiles would suggest themes related to our identities, personalities,
-            schedules, and other significant aspects of our lives.
-            This app is divided into three sections:<br />
-            <u>Part One: Metadata Extractor.</u><br />
-            <u>Part Two, Option One: Album Generator.</u><br />
-            <u>Part Two, Option Two: Profile Maker.</u><br />
+            Welcome to the PhotoLife Comps! Our team embarked on this project to address ethical concerns surrounding the use of
+            image metadata and exemplify what could be done with the personal data stored in the images we take, share and utilize
+            everyday. We developed several algorithms capable of extracting, analyzing and categorizing the metadata from each group
+            of photos uploaded to our site. Well, how do these algorithms work with the photos and with each other? First, we run a 
+            specific group of photos provided by the user through our Metadata Extractor, which extracts the metadata from each photo
+            and stores them in our database (the physical photos are not stored). To upload photos to our extractor, users are required
+            to sign in with their (Carleton) email and provide access to a folder filled with the photos they want our algorithms to 
+            have access to and work with. From there, the user has the option to generate albums from those photos using our Album 
+            Generator, which groups photos based on specific filters chosen by the user and places them in labeled folders in their Drive. 
+            Or, the user can ask for a photo profile, where our Profile Maker analyzes the photo data and displays stats (predictions) 
+            about the group of photos. After the profile maker or album generator algorithms have been called, the user's metadata is 
+            deleted from our database. And the process repeats if the user wants to interact again later.
         </p>
         <br />
-        <h4 class="fade">Ethics & Uses of Data: </h4>
+        <br />
+        <h3 class="fade">Ethics & Uses of Data: </h3>
         <p class="fade">
-            First and foremost, we emphasize the utmost respect for user privacy and data protection. We recognize the sensitive nature of image metadata
-            and handle it with great care, ensuring it is collected and processed securely, and only used for its intended purposes. We strictly adhere to
-            applicable laws, regulations, and industry best practices to guarantee the privacy and confidentiality of our users.
-            Transparency is another key aspect of our mission. We strive to provide clear and concise information to our users regarding the utilization of
-            image metadata within our algorithms. We believe that transparency fosters trust and allows users to make informed decisions about their data.
-            Our users have the right to know how their information is being utilized, and we make every effort to keep you all well-informed.
-            Additionally, we maintain a strong commitment to the responsible and ethical use of image metadata. We actively engage in ethical discussions
-            and consulted our comps advisor to ensure that our utilization of this data aligns with the values and expectations of our users and society at large.
-            We prioritize the positive impact of our algorithms, while minimizing any potential negative consequences.
-            Our mission is to continue to prioritize ethics throughout the entire process of utilizing this data within our algorithms.
+            First and foremost, we want to emphasize the utmost respect for user privacy and data protection. We recognize the sensitive
+            nature of image metadata and handle it with great care, ensuring it is collected and processed securely, only used for its 
+            intended purposes, and deleted once it is no longer needed. For this reason, we have restricted our access to the metadata 
+            of photos and not the photos themselves (no photo will be downloaded and/or stored in our database). We strictly adhere to 
+            applicable laws, regulations, and best industry practices to guarantee the privacy and confidentiality of our users. Transparency
+            is another key aspect of our mission. We strive to provide clear and concise information to our users regarding the utilization 
+            of image metadata within our algorithms. We also maintain a strong commitment to the responsible and ethical use of image metadata
+            throughout this comps project. We actively engaged in ethical discussions and consulted our comps advisor (Amy) to ensure that our
+            utilization of this data aligns with the values and expectations of our users and society at large. Our mission is to continue to
+            prioritize ethics throughout the entire process of utilizing this data within our algorithms and throughout our comps as a whole. 
+            Image metadata is truly sensitive, personal information and we will treat it as such within our programs!
         </p>
+        <br />
         <div class="p-lg-4 fade">
             <button class="btn btn-default btn-main" style="font-size: 21px;" @onclick="NavigateToUpload">Upload Photos</button>
         </div>

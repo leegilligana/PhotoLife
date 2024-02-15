@@ -1,54 +1,63 @@
-﻿@page "/profile"
+﻿@page "/profile/{user}"
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
+@using System.Text.Json
 
 
 <PageTitle>PhotoLife: Profile Maker</PageTitle>
 
-@* Title and Description *@
 <div class="text-center" id="no-scroll-bar">
-    <div class="text-center my-2">
+    @* Loading PopUp for when the album is being generated *@
+    @if (isLoading)
+    {
+        <div class="modal">
+            <div class="modal-content">
+                <div class="spinner"></div>
+                <p>Using your data to build a profile *ethically*...</p>
+            </div>
+        </div>
+    }
+    @* Title and Description *@
+    <div class="text-center my-2" style="margin: 0 4em">
         <h1>Profile Maker</h1>
-        <h5>Select Presets on Information we can gather from the photos you submitted.</h5>
+        <h5>Please choose at least one of the photo profile stats you would like to see about your photos below.</h5>
     </div>
     <div class="container">
-        <label for="Pick Options:">
             @foreach (var preset in options)
             {
-                <input type="checkbox" checked="@preset.isChecked" @onchange="e => UpdateSelection(preset)" /> @preset.Name
+                <input type="checkbox" checked="@preset.isChecked" @onchange="e => UpdateSelection(preset)" />@preset.Name
                 <br />
             }
-        </label>
     </div>
     <div class="p-lg-4">
         <button class="btn btn-default btn-main" @onclick="AddSelectedPresets"><h4>Get My Profile!</h4></button>
     </div>
-    @if (noOptions == true)
+    @if (noOptionsChosen == true)
     {
         <p>You must choose at least one option to run the profile maker algorithm.</p>
     }
-    @* <h3>Selected Presets:</h3>
-    @foreach (var preset in selectedPresets)
-    {
-        <p>@preset.Name</p>
-    } *@
 </div>
 
 @code {
-    // [Parameter]
-    // private string userEmail { get; set; };
-    private Boolean noOptions = false;
+    [Parameter]
+    public string user { get; set; }
+
+    private Boolean noOptionsChosen = false;
+    private bool isLoading = false;
+    private List<string> onlyPresetNames = new List<string>();
 
     public class PresetOption
     {
         public string Name { get; set; }
         public bool isChecked { get; set; }
     }
+
     private List<PresetOption> options = new List<PresetOption>
     {
-        new PresetOption { Name = "Time", isChecked = false },
+        new PresetOption { Name = "Time Of Day", isChecked = false },
         new PresetOption { Name = "GPS", isChecked = false },
-        new PresetOption { Name = "Camera Model", isChecked = false }
+        new PresetOption { Name = "Camera Model", isChecked = false },
+        new PresetOption { Name = "Week Day", isChecked = false }
     };
 
     private List<PresetOption> selectedPresets = new List<PresetOption>();
@@ -58,17 +67,39 @@
         option.isChecked = !option.isChecked;
     }
 
-    private void AddSelectedPresets()
+    async private Task AddSelectedPresets()
     {
-        @*if (selectedPresets.Count == 0)
+        selectedPresets = options.Where(f => f.isChecked).ToList();
+        foreach (var preset in selectedPresets)
         {
-            noOptions = true;
-        } else
+            onlyPresetNames.Add(preset.Name);
+        }
+
+        if (selectedPresets.Count == 0)
         {
-            noOptions = false;*@
-            selectedPresets = options.Where(f => f.isChecked).ToList();
-            // Thread.Sleep(2000);
-            NavigationManager.NavigateTo("/profile_results");
-            // NavigationManager.NavigateTo($"/profile_results?user={userEmail}");
+            noOptionsChosen = true;
+        }
+        else
+        {
+            noOptionsChosen = false;
+            await NavigateToNewProfile();
+        }
+    }
+
+    async private Task NavigateToNewProfile()
+    {
+        //NavigationManager.NavigateTo($"/profile_results/{Uri.EscapeDataString(JsonSerializer.Serialize(onlyPresetNames))}");
+        
+        isLoading = true;
+        StateHasChanged();
+        await Task.Delay(3333);
+
+        // Call the Profile Maker API and wait for respone.
+        //await ProfileMaker.Sum("");
+        //send data to next page or call api in the new profile? OR keep everything on this page?
+
+        isLoading = false;
+        StateHasChanged();
+        NavigationManager.NavigateTo($"/profile_results/{user}/{Uri.EscapeDataString(string.Join('-', onlyPresetNames))}");
     }
 }

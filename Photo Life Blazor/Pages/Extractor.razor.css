@@ -43,14 +43,7 @@
 }
 
 .btn-main {
-    border: 4px #c24aff solid;
-    background-color: #c24aff;
-    padding: 4%;
-    width: 16em;
-    height: 6em;
-}
-
-.btn-main:hover {
-    border: 4px #c24aff solid;
-    background-color: #e4b0ff;
+    padding: 2%;
+    width: 14em;
+    height: 4em;
 }

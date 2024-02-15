@@ -1,51 +1,180 @@
-﻿@page "/album"
+﻿@page "/album/{user}"
 @inject NavigationManager NavigationManager
+@using System.Collections.Generic
 
 <PageTitle>PhotoLife: Album Generator</PageTitle>
 
 @* Title and Description *@
 <div class="text-center" id="no-scroll-bar">
-    <div class="text-center my-2">
-        <h1>Album</h1>
-        <h5>Choose one of the options below as a category to create new albums with your photos.</h5>
+    @* Loading PopUp for when the album is being generated *@
+    @if (isLoading)
+    {
+        <div class="modal">
+            <div class="modal-content">
+                <div class="spinner"></div>
+                <p>Filtering your albums...</p>
+            </div>
+        </div>
+    }
+    <div class="text-center my-2" style="margin: 0 4em">
+        <h1>Album Generator</h1>
+        <h5>Please choose at least one of the options below to filter your photos by.
+            Be advised that too many filters can restrict how many (if any) photos can be categorized into the resulting album(s).</h5>
     </div>
-    <div>
-        <label for="Select Category:">
-            <select @bind="selectedOption">
-                <option value="">--Please choose an option--</option>
-                <option value="Tags">Tags</option>
-                <option value="Location">Location</option>
-                <option value="Time Of Day">Time (Of Day)</option>
-            </select>
-        </label>
+
+    @* Filter Buttons & Corresponding Filter Options *@
+    <div style="margin: .6em 0">
+        <label><h4>Flash:</h4></label>
+        <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(0)">@GetButtonText(0)</button>
+        <div>
+            @if (options[0].SelectedOption)
+            {
+                <div>
+                    <label><h6>Flash Option:</h6></label>
+                        <select @bind="options[0].SelectedFilter[0]">
+                            <option value="ON">Flash On</option>
+                            <option value="OFF">Flash Off</option>
+                        </select>
+                </div>
+            }
+        </div>
     </div>
+    <div style="margin: .6em 0">
+        <label><h4>Location (By Coordinates):</h4></label>
+        <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(1)">@GetButtonText(1)</button>
+        <div>
+            @if (options[1].SelectedOption)
+            {
+                <div>
+                    <label><h6>Latitude:</h6></label>
+                    <input @bind="options[1].SelectedFilter[0]" />
+                </div>
+                <div>
+                    <label><h6>Longitude:</h6></label>
+                    <input @bind="options[1].SelectedFilter[1]" />
+                </div>
+                <div>
+                    <label><h6>Distance:</h6></label>
+                    <input @bind="options[1].SelectedFilter[2]" />
+                </div>
+            }
+        </div>
+    </div>
+    <div style="margin: .6em 0">
+        <label><h4>Time Of Day:</h4></label>
+        <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(2)">@GetButtonText(2)</button>
+        <div>
+            @if (options[2].SelectedOption)
+            {
+                <div>
+                    <div>
+                        <label><h6>Date:</h6></label>
+                        <input type="datetime" @bind="options[2].SelectedFilter[0]"/>
+                    </div>
+                    <div>
+                        <label><h6>Starting Time:</h6></label>
+                        <input @bind="options[2].SelectedFilter[1]" />
+                    </div>
+                    <div>
+                        <label><h6>Ending Time:</h6></label>
+                        <input @bind="options[2].SelectedFilter[2]" />
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* Submit Button to Send Data to API *@
     <div class="p-lg-4">
         <button class="btn btn-default btn-main" @onclick="Success"><h4>Generate</h4></button>
     </div>
-    @if (Done == true)
-    {
-        <p>Success! We have processed your photos and sorted them by @selectedOption. Please check your Drive for the new Album(s).</p>
-    }
-    @if (noOption == true)
-    {
-        <p>You must choose an option to run the album generator algorithm.</p>
-    }
+
+    <div>
+        @* Error if no options chosen *@
+        @if (noOptionChosen == true)
+        {
+            <p>You must choose an option to run the album generator algorithm.</p>
+        }
+    
+        @* Success Messsage that shows after albums have been created *@
+        @if (Done == true)
+        {
+            <p>Success! We have processed your photos with your @numOfFilters chosen filter(s). <br />
+                Please check your Drive for the new Album(s). <br />
+                If there are no photos, then that means that we couldn't find photos with the filter you selected.
+            </p>
+        }
+    </div>
 </div>
 
 @code {
-    private string selectedOption = "";
-    private Boolean noOption = false;
+    private Boolean noOptionChosen = false;
     private Boolean Done = false;
+    private int numOfFilters = 0;
+    private bool isLoading = false;
+    public DateTime? DateTime { get; set; }
 
-    private void Success()
+    [Parameter] public string user { get; set; }
+
+    public class FilterOption
     {
-        if (selectedOption != "")
+        public string Filter { get; set; }
+        public bool SelectedOption { get; set; }
+        public List<string> SelectedFilter { get; set; }
+    }
+
+    private List<FilterOption> options = new List<FilterOption>
+    {
+        new FilterOption { Filter = "Flash", SelectedOption = false, SelectedFilter = new List<string> { "ON" } },
+        new FilterOption { Filter = "Location", SelectedOption = false, SelectedFilter = new List<string> { "0", "0", "0" } },
+        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilter = new List<string> { DateTime, "9:00AM", "4:00PM" } }
+    };
+
+    private void ToggleOption(int index)
+    {
+        noOptionChosen = false;
+        options[index].SelectedOption = !options[index].SelectedOption;
+    }
+
+    private string GetButtonText(int index)
+    {
+        return options[index].SelectedOption ? "YES" : "NO";
+    }
+
+    private void GetNumFilter()
+    {
+        foreach (var planB in options)
         {
-            noOption = false;
-            Done = true;
+            if (planB.SelectedOption)
+            {
+                numOfFilters++;
+            }
+        }
+    }
+
+    // Handles the filter submission
+    async private Task Success()
+    {
+        GetNumFilter();
+        if (numOfFilters == 0)
+        {
+            noOptionChosen = true;
         } else
         {
-            noOption = true;
+            // Turn Loading Screen On
+            noOptionChosen = false;
+            isLoading = true;
+            StateHasChanged();
+            await Task.Delay(3333);
+
+            // Call the Album Generator API and wait for respone.
+            //await AlbumGenerator.Sum();
+            //curl -X POST
+
+            // Turn Loading Screen Off and notify user to check their drive
+            isLoading = false;
+            StateHasChanged();
+            Done = true;
         }
     }
 }

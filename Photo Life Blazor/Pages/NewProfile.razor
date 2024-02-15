@@ -1,12 +1,14 @@
-﻿@page "/profile_results"
+﻿@page "/profile_results/{user}/{Data}"
+@inject NavigationManager NavigationManager
+@using System.Collections.Generic
 
 <PageTitle>PhotoLife: New Profile</PageTitle>
 
 @* Title and Description *@
-<div class="text-center my-2">
+<div class="text-center">
     <h1>New Profile Generated! <br /> Here are some stats about the photos you provided:</h1>
 
-    @if (TimeOfDay != "")
+    @if (TimeOfDayHeader)
     {
         <div>
             <h3>Your photos were most likely taken in the:</h3>
@@ -14,7 +16,7 @@
         </div>
     }
 
-    @if (WeekDay != "")
+    @if (WeekDayHeader)
     {
         <div>
             <h3>The day of the week that your photos were probably taken on:</h3>
@@ -22,15 +24,15 @@
         </div>
     }
 
-    @if (GPS != "")
+    @if (GPSHeader)
     {
         <div>
-            <h3>Your most frequent photo location is:</h3>
+            <h3>Your spend a lot of time in:</h3>
             <h5>@GPS</h5>
         </div>
     }
 
-    @if (CameraModel != "")
+    @if (CameraModelHeader)
     {
         <div>
             <h3>Your most used Camera Model is:</h3>
@@ -40,10 +42,50 @@
 </div>
 
 @code {
-    private string TimeOfDay = "", WeekDay = "", GPS = "", CameraModel = "";
+    [Parameter]
+    public string Data { get; set; }
+    [Parameter]
+    public string user { get; set; }
 
+    private List<string> presetHeaders { get; set; }
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(Data))
+        {
+            presetHeaders = Data.Split('-').ToList();
+        }
+    }
+
+    private Boolean TimeOfDayHeader = false, WeekDayHeader = false, GPSHeader = false, CameraModelHeader = false;
+    private string TimeOfDay = "MORNING", WeekDay = "TUESDAY", GPS = "NORTHFIELD, MN", CameraModel = "IPHONE 11 PRO";
+
+    // Set headers
+    protected override void OnParametersSet()
+    {
+        foreach (string preset in presetHeaders)
+        {
+            if (preset == "Time Of Day")
+            {
+                TimeOfDayHeader = true;
+            }
+            else if (preset == "GPS")
+            {
+                WeekDayHeader = true;
+            }
+            else if (preset == "Camera Model")
+            {
+                GPSHeader = true;
+            }
+            else if (preset == "Week Day")
+            {
+                CameraModelHeader = true;
+            }
+        }
+    }
+
+    // Grab data from profile maker algorithm
     private void GetStats()
     {
-        
+        //get data from API
     }
 }

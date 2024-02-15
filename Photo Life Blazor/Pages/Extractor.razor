@@ -10,21 +10,25 @@
         <div class="p-2 slide">
             <h1>Step 1: Metadata Extractor</h1>
             <h5>
-                Sign into your Google Drive to upload photos you would like to upload. Minimum of 2 photos and Maximum of {NUMBER} photos.
-                Create a folder called 'PhotoLife' and put all of the pictures you want to use in it for easier uploading.
-                Acceptable file types: {.jpg, .heic}
+                To start, please navigate to your Google Drive and create/update a folder labeled 'PhotoLife' where all the desired
+                photos you wish to upload can be placed. We kindly request that you include a minimum of 5 photos in this folder. 
+                Afterwards, proceed to sign into your Google Drive using the button provided below to grant our program access to 
+                the photos stored within said folder.<br />
+                Acceptable file types: {.png, .jpg, .heic}
+
             </h5>
             <div class="align-content-center justify-content-center">
-                <button class="btn btn-default btn-main" @onclick="googleDrive" style="font-size: 22px;">Sign Into Google</button>
+                <button class="btn btn-main" @onclick="googleDrive" style="font-size: 22px;"><h4>Sign Into Google</h4></button>
             </div>
         </div>
         <div class="p-2 slide delay">
             <h1>Step 2: Analyzing The Data</h1>
             <h5>
-                With the photos you uploaded, you can either: <br />
-                1) Generate Albums based on a certain category (such as location)
+                With the photos you provided, you can either: <br />
+                1) Generate Albums based on specific filter options. [Left]
                 <br />OR<br />
-                2) Ask for a Profile that can tell you characteristics about the group of photos you selected. Please select an option below:
+                2) Create a Profile based on your photo metadata charateristics. [Right]
+                <br />Please click on an option below:
             </h5>
             <div class="container">
                 <div class="album">
@@ -43,16 +47,19 @@
 </div>
 
 @code {
+    // take user email WITHOUT the @
+    private string user = "champlisst";
+
     private async void googleDrive()
     {
         await GoogleServices.getUserPhotos();
     }
     private void NavigateToAlbum()
     {
-        NavigationManager.NavigateTo("/album");
+        NavigationManager.NavigateTo($"/album/{user}");
     }
     private void NavigateToProfile()
     {
-        NavigationManager.NavigateTo("/profile");
+        NavigationManager.NavigateTo($"/profile/{user}");
     }
 }
