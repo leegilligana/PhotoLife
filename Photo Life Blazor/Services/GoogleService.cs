@@ -142,7 +142,7 @@ namespace Photo_Life_Blazor.Services
             {
                 var path = System.IO.Directory.GetCurrentDirectory();
                 FileStream file = File.Create(path + "\\Photos\\" + Ids[i]);
-                streams[i].CopyTo(file);
+                await streams[i].CopyToAsync(file);
                 file.Close();
             }
             return 1;
@@ -163,6 +163,20 @@ namespace Photo_Life_Blazor.Services
             foreach (var directory in directories)
                 foreach (var tag in directory.Tags)
                     Console.WriteLine($"{directory.Name} - {tag.Name} = {tag.Description}");
+        }
+        public async Task<string> createFolder(string folderName)
+        {
+            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            {
+                Name = folderName,
+                MimeType = "application/vnd.google-apps.folder"
+            };
+            var request = driveService.Files.Create(fileMetadata);
+            request.Fields = "id";
+            var file = await request.ExecuteAsync();
+            // Prints the created folder id.
+            Console.WriteLine("Folder ID: " + file.Id);
+            return file.Id;
         }
         public async Task getUserPhotos()
         {
