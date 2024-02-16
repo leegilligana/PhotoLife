@@ -1,6 +1,7 @@
 ﻿@page "/album/{user}"
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
+@using 
 
 <PageTitle>PhotoLife: Album Generator</PageTitle>
 
@@ -112,7 +113,7 @@
     private Boolean Done = false;
     private int numOfFilters = 0;
     private bool isLoading = false;
-    public DateTime? DateTime { get; set; }
+    //public DateTime? DateTime { get; set; }
 
     [Parameter] public string user { get; set; }
 
@@ -127,7 +128,7 @@
     {
         new FilterOption { Filter = "Flash", SelectedOption = false, SelectedFilter = new List<string> { "ON" } },
         new FilterOption { Filter = "Location", SelectedOption = false, SelectedFilter = new List<string> { "0", "0", "0" } },
-        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilter = new List<string> { DateTime, "9:00AM", "4:00PM" } }
+        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilter = new List<string> { "DATE", "9:00AM", "4:00PM" } }
     };
 
     private void ToggleOption(int index)
