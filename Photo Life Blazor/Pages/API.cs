@@ -1,4 +1,5 @@
-﻿public interface IProductHttpRepository
+﻿/*
+public interface IProductHttpRepository
 {
     Task<List<Flash>> GetFlash();
 }
@@ -30,3 +31,4 @@ public class ProductHttpRepository : IProductHttpRepository
     }
 }
 
+*/
