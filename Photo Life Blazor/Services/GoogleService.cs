@@ -6,18 +6,8 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using Google.Apis.Drive.v3;
 using Google.Apis.Download;
-using Google.Apis.Gmail.v1.Data;
-using System.IO;
 using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Authentication;
-using Google.Apis.Oauth2;
-using System.Net;
-using Google.Apis.Oauth2.v2.Data;
-using Google.Apis.Gmail.v1;
-using Google.Apis.PeopleService.v1;
 using Google.Apis.Oauth2.v2;
-using Google.Apis.PeopleService.v1.Data;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -27,7 +17,7 @@ namespace Photo_Life_Blazor.Services
         DriveService? driveService;
         string? username;
         string folderID = "default";
-        public async Task setUp()
+        public async Task<string> setUp()
         {
             Console.WriteLine("Setting up");
             credential ??= await GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -75,11 +65,8 @@ namespace Photo_Life_Blazor.Services
                     folderID = folderId[0];
                     Console.WriteLine(folderID);
                 }
-                else
-                {
-                    Console.WriteLine("OOOPIES");
-                }
             }
+            return username;
         }
         public async Task<List<string>> getFileIds()
         {
