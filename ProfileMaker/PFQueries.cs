@@ -1,306 +1,171 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DB_Queries;
 using Npgsql;
-using System.Device.Location;
-using NpgsqlTypes;
-using Unsplasharp.Models;
-using System.Data;
+using Profiles;
 
-namespace DB_Queries
+namespace ProfileMaker
 {
-    internal class PFQueries
+    class Program
     {
-        private NpgsqlConnection conn;
-        private string owner;
-        public PFQueries(string connString, string user)
+        /**
+         * Returns a string representing the average timespan a string took their photos
+         * between a specified start and end date 
+        */
+        public string PhotoTakingFreq(PFQueries q, DateTime s, DateTime e)
         {
-            var dataSourceBuilder = new NpgsqlDataSourceBuilder(connString);
-            var dataSource = dataSourceBuilder.Build();
-            conn = dataSource.OpenConnection();
-            owner = user;
+            var dates = q.Dates(s, e);
 
-        }
-
-        public string[] Flash(bool isFlash)
-        {
-
-            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND Flash = @isFlash;", conn);
-            cmd.Parameters.AddWithValue("isFlash", isFlash);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] Model(string model)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND model LIKE '%{model}%';", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] DateTimeRange(DateTime start, DateTime end)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND date_time >= @start AND date_time <= @end;", conn);
-            cmd.Parameters.AddWithValue("start", start);
-            cmd.Parameters.AddWithValue("end", end);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        // returns list of date times
-        public List<DateTime> Dates(DateTime start, DateTime end)
-        {
-            var cmd = new NpgsqlCommand("SELECT date_time FROM photolife WHERE " +
-                "owner = @owner AND date_time >= @start AND date_time <= @end ORDER BY date_time;", conn);
-            cmd.Parameters.AddWithValue("start", start);
-            cmd.Parameters.AddWithValue("end", end);
-            cmd.Parameters.AddWithValue("owner", owner);
-            var reader = cmd.ExecuteReader();
-
-            List<DateTime> dates = new List<DateTime>();
-            int i = 0;
-            while (reader.Read())
+            if (dates.Count <= 1)
             {
-                Console.WriteLine("Date to add: " + reader.GetDateTime("date_time"));
-                dates.Add(reader.GetDateTime("date_time"));
-                Console.WriteLine("Date in list: " + dates[i]);
-                i++;
+                return "0";
             }
-            reader.Close();
-            return dates;
-        }
-
-        // Returns dictionary of photo file names ordered by ascending date
-        public Dictionary<string, string> PhotoChronologie(DateTime start, DateTime end)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name, date_time FROM photolife WHERE " +
-                "owner = @owner AND date_time >= @start AND date_time <= @end ORDER BY date_time ASC;", conn);
-            cmd.Parameters.AddWithValue("start", start);
-            cmd.Parameters.AddWithValue("end", end);
-            cmd.Parameters.AddWithValue("owner", owner);
-            var reader = cmd.ExecuteReader();
-
-            Dictionary<string, string> dct = new Dictionary<string, string>();
-            while (reader.Read())
+            else
             {
-                dct.Add(reader.GetString("file_name"), reader.GetDateTime("date_time").ToString());
-            }
-            reader.Close();
-            return dct;
-        }
-
-        public string[] Location(double inputLat, double inputLong, int inputDistance)
-        {
-            var locList = new List<string>();
-            GeoCoordinate inputCoordinate = new GeoCoordinate(inputLat, inputLong);
-            var cmd = new NpgsqlCommand("SELECT file_name, gps_coordinates FROM test3 WHERE owner = @owner;", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            using (NpgsqlDataReader reader = cmd.ExecuteReader())
-            {
-                // Iterate over the rows
-                while (reader.Read())
+                List<TimeSpan> time_diff = new List<TimeSpan>();
+                for (int i = 1; i < dates.Count; i++)
                 {
-                    // Access the values for each row
-                    try
+                    time_diff.Add(dates[i] - dates[i - 1]);
+                }
+
+                double tick_ave = time_diff.Average(d => d.Ticks);
+                TimeSpan ave_dif = TimeSpan.FromTicks((long)tick_ave);
+
+                return ave_dif.ToString();
+            }
+        }
+
+        /** 
+         * Return string of the period of the day photos are dated/taken on average
+         */
+        public string AvePeriodTaken(PFQueries q, DateTime s, DateTime e)
+        {
+
+            return "";
+        }
+
+        /** 
+         * Return string of the day of the week photos are dated/taken on average
+         */
+        public string AveDayTaken(PFQueries q, DateTime s, DateTime e)
+        {
+            var dates = q.Dates(s, e);
+            string[] days_of_weeks = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+            int count_old = 0;
+            int count_new = 0;
+            string ave_day = "";
+
+            if (dates.Count <= 1)
+            {
+                return "0";
+            }
+            else
+            {
+                foreach (var day in days_of_weeks)
+                {
+                    foreach (var date in dates)
                     {
-                        string filename = reader.GetString(reader.GetOrdinal("file_name"));
-                        NpgsqlPoint location = reader.GetFieldValue<NpgsqlPoint>(reader.GetOrdinal("gps_coordinates"));
-
-                        double picLat = Convert.ToDouble(location.X);
-                        double picLong = Convert.ToDouble(location.Y);
-                        GeoCoordinate picCoordinate = new GeoCoordinate(picLat, picLong);
-                        // Calculate the distance between the two locations in meters
-                        double distanceMeters = inputCoordinate.GetDistanceTo(picCoordinate);
-
-                        // Convert the distance to kilometers
-                        double distanceKilometers = distanceMeters / 1000;
-
-                        if (distanceKilometers <= inputDistance)
+                        if (date.ToString("dddd") == day)
                         {
-                            locList.Add(filename);
+                            count_new++;
+                        }
+                        if (count_new > count_old)
+                        {
+                            ave_day = date.ToString("dddd");
+                            break;
                         }
                     }
-                    catch (Exception)
-                    {
-                        ;
-                    }
-
+                    count_old = count_new;
+                    count_new = 0;
                 }
-                reader.Close();
+                return ave_day;
             }
-            return locList.ToArray();
-        }
-
-        public string[] Width(int width)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND image_width = @width;", conn);
-            cmd.Parameters.AddWithValue("width", width);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] Height(int height)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND image_height = @height;", conn);
-            cmd.Parameters.AddWithValue("height", height);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] Orientation(string orientation)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND orientation LIKE '%{orientation}%';", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] XResolution(int xRes)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND x_resolution = @xRes;", conn);
-            cmd.Parameters.AddWithValue("xRes", xRes);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] YResolution(int yRes)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND y_resolution = @yRes;", conn);
-            cmd.Parameters.AddWithValue("yRes", yRes);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] Software(string software)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND software LIKE '%{software}%';", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] ExposureTime(double exposureTime)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND exposure_time = @exposureTime;", conn);
-            cmd.Parameters.AddWithValue("exposureTime", exposureTime);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] ShutterSpeedValue(double shutterSpeedValue)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND shutter_speed_value = @shutterSpeedValue;", conn);
-            cmd.Parameters.AddWithValue("shutterSpeedValue", shutterSpeedValue);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] BrightnessValue(double brightnessValue)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND brightness_value = @brightnessValue;", conn);
-            cmd.Parameters.AddWithValue("brightnessValue", brightnessValue);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] SceneType(string sceneType)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND scene_type LIKE '%{sceneType}%';", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] ExposureMode(string exposureMode)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND exposure_mode LIKE '%{exposureMode}%';", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] LensModel(string lensModel)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND lens_model LIKE '%{lensModel}%';", conn);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] FileType(string fileType)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND detected_file_type_name LIKE '%{fileType}%';", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] FileName(string fileName)
-        {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND file_name LIKE '%{fileName}%';", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] FileSize(float fileSize)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND file_size = @fileSize;", conn);
-            cmd.Parameters.AddWithValue("fileSize", fileSize);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] GPSAltitude(double gpsAltitude)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND gps_altitude = @gpsAltitude;", conn);
-            cmd.Parameters.AddWithValue("gpsAltitude", gpsAltitude);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] GPSImgDirection(double gpsImgDirection)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND gps_img_direction = @gpsImgDirection;", conn);
-            cmd.Parameters.AddWithValue("gpsImgDirection", gpsImgDirection);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public string[] GPSHorizontalPositioningError(double gpsHorizontalPositioningError)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND gps_horizontal_positioning_error = @gpsHorizontalPositioningError;", conn);
-            cmd.Parameters.AddWithValue("gpsHorizontalPositioningError", gpsHorizontalPositioningError);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
-        }
-
-        public void deleteAll()
-        {
-            var cmd = new NpgsqlCommand("DELETE FROM test3 where Owner = @owner;", conn);
-            cmd.Parameters.AddWithValue("owner", owner);
-            cmd.ExecuteNonQuery();
         }
 
         /**
-         * Updated DataReader. Original only grabbed data from hardcoded column. 
-         * Now a string can be passed in for a specific column.
-         * Returns a list of strings representing data of a column in the Database
+         * Returns string of the location where a user takes their photos most frequently
          */
-        public string[] DataReader(NpgsqlDataReader reader, string col = "0")
+        public string MostFreqLocation(PFQueries q)
         {
-            var list = new List<string>();
-            // checks to make sure col is can be converted to an int
-            if (Int32.TryParse(col, out int i)) // if an int, read from DataReader using int
+
+            return "";
+        }
+
+        /**
+         * Returns string of the most frequent camera model used, as well as the photos using
+         * that camera model.
+         */
+        public string MostFreqCameraModel(PFQueries q)
+        {
+            var models = q.ModelDict();
+            int count_old = 0;
+            int count_new = 0;
+            string model = "";
+
+            if (models.Count <= 1)
             {
-                while (reader.Read())
-                {
-                    list.Add(reader.GetString(i));
-                }
-            } else // if not an int, read from Datareader using string
-            {
-                while (reader.Read())
-                {
-                    list.Add(reader.GetString(reader.GetOrdinal(col)));
-                }
+                return "0";
             }
-            reader.Close();
-            return list.ToArray();
+            else
+            {
+                foreach (var day in days_of_weeks)
+                {
+                    foreach (var date in dates)
+                    {
+                        if (date.ToString("dddd") == day)
+                        {
+                            count_new++;
+                        }
+                        if (count_new > count_old)
+                        {
+                            model = date.ToString("dddd");
+                            break;
+                        }
+                    }
+                    count_old = count_new;
+                    count_new = 0;
+                }
+                return model;
+            }
+        }
+
+        /**
+         * Returns string of the location where a user takes their photos most frequently
+         */
+        public string AveBrightness(PFQueries q)
+        {
+            var brightness_values = q.BrightnessValueList();
+            var ave_value = brightness_values.Average();
+            return ave_value.ToString();
+        }
+
+        /**
+         * Returns a Profile object, which contains variables representing user-selected 
+         * information to grab from their photos
+         */
+        public Profile CreateProfile(string filters)
+        {
+            Profile userProfile = new Profile();
+            return userProfile;
+        }
+
+        static void Main(string[] args)
+        {
+            var connString = "Host=cs400f23acd.mathcs.carleton.edu;Username=photolife;" +
+            "Password=BlueWTRgrass23&;Database=photolife";
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(connString);
+            var dataSource = dataSourceBuilder.Build();
+            var conn = dataSource.OpenConnection();
+
+            Program program = new Program();
+            PFQueries q_lookup = new PFQueries(connString, "Alejandro");
+
+            DateTime s = new DateTime(2001, 1, 1);
+            DateTime e = new DateTime(2024, 1, 31);
+            Console.WriteLine(program.PhotoTakingFreq(q_lookup, s, e));
+
         }
     }
 }
+
+/*
+ * 
+ */

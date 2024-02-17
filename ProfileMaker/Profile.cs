@@ -11,15 +11,14 @@ namespace Profiles
     {
         public string? PhotoTakingFreq { get; }
         public Dictionary<string, string>? PhotoDateOrder { get; }
-        public string? CameraModels { get;  }
-        public string? CameraModelCount { get; }
+        public Dictionary<string, string>? CameraModels { get; }
         public string? Flash { get; }
         public string? DeviceModels { get; }
-        public string? GpsCords {  get; }
+        public string? GpsCords { get; }
 
-        public Profile(string time, string? gpscords)
+        public Profile()
         {
-            
+
         }
     }
 }
