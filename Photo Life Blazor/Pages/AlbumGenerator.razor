@@ -120,10 +120,6 @@
 					    <label><h6>Exposure Time:</h6></label>
 					    <input @bind="options[5].SelectedFilterDouble[0]" />
 				    </div>
-				    <div>
-					    <label><h6>Exposure Time:</h6></label>
-					    <input @bind="options[5].SelectedFilterDouble[1]" />
-				    </div>
 			    }
 		    </div>
 </div>
@@ -137,10 +133,6 @@
 					    <label><h6>Shutter Speed Value:</h6></label>
 					    <input @bind="options[6].SelectedFilterDouble[0]" />
 				    </div>
-				    <div>
-					    <label><h6>Shutter Speed Value:</h6></label>
-					    <input @bind="options[6].SelectedFilterDouble[1]" />
-				    </div>
 			    }
 		    </div>
 </div>
@@ -153,10 +145,6 @@
 				    <div>
 					    <label><h6>Brightness Value:</h6></label>
 					    <input @bind="options[7].SelectedFilterDouble[0]" />
-				    </div>
-				    <div>
-					    <label><h6>Brightness Value:</h6></label>
-					    <input @bind="options[7].SelectedFilterDouble[1]" />
 				    </div>
 			    }
 		    </div>
@@ -234,11 +222,7 @@
 			    {
 				    <div>
 					    <label><h6>File Size:</h6></label>
-					    <input @bind="options[13].SelectedFilterInt[0]" />
-				    </div>
-				    <div>
-					    <label><h6>File Size:</h6></label>
-					    <input @bind="options[13].SelectedFilterInt[1]" />
+					    <input @bind="options[13].SelectedFilterDouble[0]" />
 				    </div>
 			    }
 		    </div>
@@ -253,10 +237,6 @@
 					    <label><h6>GPS Altitude:</h6></label>
 					    <input @bind="options[14].SelectedFilterDouble[0]" />
 				    </div>
-				    <div>
-					    <label><h6>GPS Altitude:</h6></label>
-					    <input @bind="options[14].SelectedFilterDouble[1]" />
-				    </div>
 			    }
 		    </div>
 </div>
@@ -269,10 +249,6 @@
 				    <div>
 					    <label><h6>GPS Img Direction:</h6></label>
 					    <input @bind="options[15].SelectedFilterDouble[0]" />
-				    </div>
-				    <div>
-					    <label><h6>GPS Img Direction:</h6></label>
-					    <input @bind="options[15].SelectedFilterDouble[1]" />
 				    </div>
 			    }
 		    </div>
@@ -287,10 +263,6 @@
 					    <label><h6>GPS Horizontal Positioning Error:</h6></label>
 					    <input @bind="options[16].SelectedFilterDouble[0]" />
 				    </div>
-				    <div>
-					    <label><h6>GPS Horizontal Positioning Error:</h6></label>
-					    <input @bind="options[16].SelectedFilterDouble[1]" />
-				    </div>
 			    }
 		    </div>
 </div>
@@ -303,10 +275,6 @@
 				    <div>
 					    <label><h6>Width:</h6></label>
 					    <input @bind="options[17].SelectedFilterInt[0]" />
-				    </div>
-				    <div>
-					    <label><h6>Width:</h6></label>
-					    <input @bind="options[17].SelectedFilterInt[1]" />
 				    </div>
 			    }
 		    </div>
@@ -321,10 +289,6 @@
 					    <label><h6>Height:</h6></label>
 					    <input @bind="options[18].SelectedFilterInt[0]" />
 				    </div>
-				    <div>
-					    <label><h6>Height:</h6></label>
-					    <input @bind="options[18].SelectedFilterInt[1]" />
-				    </div>
 			    }
 		    </div>
 </div>
@@ -338,10 +302,6 @@
 					    <label><h6>X Resolution:</h6></label>
 					    <input @bind="options[19].SelectedFilterInt[0]" />
 				    </div>
-				    <div>
-					    <label><h6>X Resolution:</h6></label>
-					    <input @bind="options[19].SelectedFilterInt[1]" />
-				    </div>
 			    }
 		    </div>
 </div>
@@ -354,10 +314,6 @@
 				    <div>
 					    <label><h6>Y Resolution:</h6></label>
 					    <input @bind="options[20].SelectedFilterInt[0]" />
-				    </div>
-				    <div>
-					    <label><h6>Y Resolution:</h6></label>
-					    <input @bind="options[20].SelectedFilterInt[1]" />
 				    </div>
 			    }
 		    </div>
@@ -425,7 +381,7 @@
     {
         new FilterOption { Filter = "Flash", SelectedOption = false, SelectedFilterString = new List<string> { "ON" } },
         new FilterOption { Filter = "Location", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0, 0.0 } },
-        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilterDateTime = new List<DateTime> {basic, basic} },
+        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilterDateTime = new List<DateTime> {basic, basic, basic} },
         new FilterOption { Filter = "Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
         new FilterOption { Filter = "Orientation", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } },
         new FilterOption { Filter = "Exposure Time", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
@@ -436,7 +392,7 @@
         new FilterOption { Filter = "Lens Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
         new FilterOption { Filter = "File Type", SelectedOption = false, SelectedFilterString = new List<string> { "JPEG" } }, // add dropdown .jpg .heic .png
         new FilterOption { Filter = "File Name", SelectedOption = false, SelectedFilterString = new List<string> { "IMG_0001" } },
-        new FilterOption { Filter = "File Size", SelectedOption = false, SelectedFilterInt = new List<int> { 0, 0 } },
+        new FilterOption { Filter = "File Size", SelectedOption = false, SelectedFilterDouble = new List<double> { 0, 0 } },
         new FilterOption { Filter = "GPS Altitude", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "GPS Img Direction", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "GPS Horizontal Positioning Error", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
