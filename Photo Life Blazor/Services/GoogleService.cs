@@ -8,6 +8,9 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Download;
 using System.Net.Http.Headers;
 using Google.Apis.Oauth2.v2;
+using System.Security.Cryptography.Xml;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -72,11 +75,15 @@ namespace Photo_Life_Blazor.Services
         {
             List<string> fileIds = new List<string>();
             var request = driveService.Files.List();
+            var previousIds = await getStoredPhotos(username);
             request.Q = "mimeType contains 'image/' and trashed = false and '" + folderID + "' in parents";
             var fileList = await request.ExecuteAsync();
             foreach (var file in fileList.Files)
             {
-                fileIds.Add(file.Id);
+                if (!(previousIds.Contains(file.Id)))
+                {
+                    fileIds.Add(file.Id);
+                }
             }
             return fileIds;
         }
@@ -143,14 +150,6 @@ namespace Photo_Life_Blazor.Services
             }
         }
 
-        public void readMetadata(string name)
-        {
-            var path = System.IO.Directory.GetCurrentDirectory();
-            IEnumerable<MetadataExtractor.Directory> directories = ImageMetadataReader.ReadMetadata(path + "\\Photos\\" + name);
-            foreach (var directory in directories)
-                foreach (var tag in directory.Tags)
-                    Console.WriteLine($"{directory.Name} - {tag.Name} = {tag.Description}");
-        }
         public async Task<string> createFolder(string folderName)
         {
             var fileMetadata = new Google.Apis.Drive.v3.Data.File()
@@ -176,6 +175,32 @@ namespace Photo_Life_Blazor.Services
                 request.AddParents = folderId;
                 await request.ExecuteAsync();
             }
+        }
+        public async Task<List<string>> getStoredPhotos(string username)
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var content = new StringContent("{\"username\": \""+username+"\"}", Encoding.UTF8,
+                                    "application/json");
+            var response = await client.PostAsync("https://localhost:7214/api/metadata/GetAll", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                // Parse the response body.
+                var ids = await response.Content.ReadAsStringAsync();  //Make sure to add a reference to System.Net.Http.Formatting.dll
+                ids = ids.Replace("[", "");
+                ids = ids.Replace("\"", "");
+                ids = ids.Replace("]", "");
+                var list_ids = ids.Split(",").ToList();
+                Console.WriteLine(ids);
+                return list_ids;
+            }
+            else
+            {
+                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                return new List<string>();
+            }
+
         }
         public async Task getUserPhotos()
         {
