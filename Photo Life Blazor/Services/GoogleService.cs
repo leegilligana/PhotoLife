@@ -8,6 +8,9 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Download;
 using System.Net.Http.Headers;
 using Google.Apis.Oauth2.v2;
+using System.Security.Cryptography.Xml;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -19,6 +22,7 @@ namespace Photo_Life_Blazor.Services
         string folderID = "default";
         public async Task<string> setUp()
         {
+            testFunc();
             Console.WriteLine("Setting up");
             credential ??= await GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
@@ -176,6 +180,26 @@ namespace Photo_Life_Blazor.Services
                 request.AddParents = folderId;
                 await request.ExecuteAsync();
             }
+        }
+        public async Task testFunc()
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var content = new StringContent("{\"username\": \"Alejandro\"}", Encoding.UTF8,
+                                    "application/json");
+            var response = await client.PostAsync("https://localhost:7214/api/metadata/GetAll", content);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                // Parse the response body.
+                var dataObjects = await response.Content.ReadAsStringAsync();  //Make sure to add a reference to System.Net.Http.Formatting.dll
+                Console.WriteLine(dataObjects);
+            }
+            else
+            {
+                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+            }
+
         }
         public async Task getUserPhotos()
         {
