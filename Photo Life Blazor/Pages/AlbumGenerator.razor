@@ -1,6 +1,7 @@
 ﻿@page "/album/{user}"
 @inject NavigationManager NavigationManager
 @using System.Collections.Generic
+@using metadata_extractor.Models
 
 <PageTitle>PhotoLife: Album Generator</PageTitle>
 
@@ -31,7 +32,7 @@
             {
                 <div>
                     <label><h6>Flash Option:</h6></label>
-                        <select @bind="options[0].SelectedFilter[0]">
+                        <select @bind="options[0].SelectedFilterString[0]">
                             <option value="ON">Flash On</option>
                             <option value="OFF">Flash Off</option>
                         </select>
@@ -47,19 +48,20 @@
             {
                 <div>
                     <label><h6>Latitude:</h6></label>
-                    <input @bind="options[1].SelectedFilter[0]" />
+                    <input @bind="options[1].SelectedFilterDouble[0]" />
                 </div>
                 <div>
                     <label><h6>Longitude:</h6></label>
-                    <input @bind="options[1].SelectedFilter[1]" />
+                    <input @bind="options[1].SelectedFilterDouble[1]" />
                 </div>
                 <div>
                     <label><h6>Distance:</h6></label>
-                    <input @bind="options[1].SelectedFilter[2]" />
+                    <input @bind="options[1].SelectedFilterDouble[2]" />
                 </div>
             }
         </div>
     </div>
+    <div>
     <div style="margin: .6em 0">
         <label><h4>Time Of Day:</h4></label>
         <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(2)">@GetButtonText(2)</button>
@@ -69,21 +71,266 @@
                 <div>
                     <div>
                         <label><h6>Date:</h6></label>
-                        <input type="datetime" @bind="options[2].SelectedFilter[0]"/>
+                        <input type="datetime" @bind="options[2].SelectedFilterDateTime[0]"/>
                     </div>
                     <div>
                         <label><h6>Starting Time:</h6></label>
-                        <input @bind="options[2].SelectedFilter[1]" />
+                        <input @bind="options[2].SelectedFilterDateTime[1]" />
                     </div>
                     <div>
                         <label><h6>Ending Time:</h6></label>
-                        <input @bind="options[2].SelectedFilter[2]" />
+                        <input @bind="options[2].SelectedFilterDateTime[2]" />
                     </div>
                 </div>
             }
         </div>
     </div>
-
+        <label><h4>Model:</h4></label>
+        <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(3)">@GetButtonText(3)</button>
+        <div>
+            @if (options[3].SelectedOption)
+            {
+                <div>
+                    <label><h6>Model:</h6></label>
+                    <input @bind="options[3].SelectedFilterString[0]" />
+                </div>
+            }
+        </div>
+    </div>
+    <div style="margin: .6em 0">
+		    <label><h4>Orientation:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(4)">@GetButtonText(4)</button>
+		    <div>
+			    @if (options[4].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Orientation:</h6></label>
+					    <input @bind="options[4].SelectedFilterString[0]" />
+				    </div>
+			    }
+		    </div>
+    </div>
+<div style="margin: .6em 0">
+		    <label><h4>Exposure Time:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(5)">@GetButtonText(5)</button>
+		    <div>
+			    @if (options[5].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Exposure Time:</h6></label>
+					    <input @bind="options[5].SelectedFilterDouble[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Shutter Speed Value:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(6)">@GetButtonText(6)</button>
+		    <div>
+			    @if (options[6].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Shutter Speed Value:</h6></label>
+					    <input @bind="options[6].SelectedFilterDouble[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Brightness Value:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(7)">@GetButtonText(7)</button>
+		    <div>
+			    @if (options[7].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Brightness Value:</h6></label>
+					    <input @bind="options[7].SelectedFilterDouble[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Scene Type:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(8)">@GetButtonText(8)</button>
+		    <div>
+			    @if (options[8].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Scene Type:</h6></label>
+					    <input @bind="options[8].SelectedFilterString[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Exposure Mode:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(9)">@GetButtonText(9)</button>
+		    <div>
+			    @if (options[9].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Exposure Mode:</h6></label>
+					    <input @bind="options[9].SelectedFilterString[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Lens Model:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(10)">@GetButtonText(10)</button>
+		    <div>
+			    @if (options[10].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Lens Model:</h6></label>
+					    <input @bind="options[10].SelectedFilterString[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>File Type:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(11)">@GetButtonText(11)</button>
+		    <div>
+			    @if (options[11].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>File Type:</h6></label>
+					    <input @bind="options[11].SelectedFilterString[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>File Name:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(12)">@GetButtonText(12)</button>
+		    <div>
+			    @if (options[12].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>File Name:</h6></label>
+					    <input @bind="options[12].SelectedFilterString[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>File Size:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(13)">@GetButtonText(13)</button>
+		    <div>
+			    @if (options[13].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>File Size:</h6></label>
+					    <input @bind="options[13].SelectedFilterDouble[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>GPS Altitude:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(14)">@GetButtonText(14)</button>
+		    <div>
+			    @if (options[14].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>GPS Altitude:</h6></label>
+					    <input @bind="options[14].SelectedFilterDouble[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>GPS Img Direction:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(15)">@GetButtonText(15)</button>
+		    <div>
+			    @if (options[15].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>GPS Img Direction:</h6></label>
+					    <input @bind="options[15].SelectedFilterDouble[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>GPS Horizontal Positioning Error:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(16)">@GetButtonText(16)</button>
+		    <div>
+			    @if (options[16].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>GPS Horizontal Positioning Error:</h6></label>
+					    <input @bind="options[16].SelectedFilterDouble[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Width:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(17)">@GetButtonText(17)</button>
+		    <div>
+			    @if (options[17].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Width:</h6></label>
+					    <input @bind="options[17].SelectedFilterInt[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Height:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(18)">@GetButtonText(18)</button>
+		    <div>
+			    @if (options[18].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Height:</h6></label>
+					    <input @bind="options[18].SelectedFilterInt[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>X Resolution:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(19)">@GetButtonText(19)</button>
+		    <div>
+			    @if (options[19].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>X Resolution:</h6></label>
+					    <input @bind="options[19].SelectedFilterInt[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Y Resolution:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(20)">@GetButtonText(20)</button>
+		    <div>
+			    @if (options[20].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Y Resolution:</h6></label>
+					    <input @bind="options[20].SelectedFilterInt[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
+<div style="margin: .6em 0">
+		    <label><h4>Software:</h4></label>
+		    <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(21)">@GetButtonText(21)</button>
+		    <div>
+			    @if (options[21].SelectedOption)
+			    {
+				    <div>
+					    <label><h6>Software:</h6></label>
+					    <input @bind="options[21].SelectedFilterString[0]" />
+				    </div>
+			    }
+		    </div>
+</div>
     @* Submit Button to Send Data to API *@
     <div class="p-lg-4">
         <button class="btn btn-default btn-main" @onclick="Success"><h4>Generate</h4></button>
@@ -114,20 +361,46 @@
     private bool isLoading = false;
     //public DateTime? DateTime { get; set; }
 
+    private ResponseModel responseModel = new ResponseModel();
+
     [Parameter] public string user { get; set; }
 
     public class FilterOption
     {
         public string Filter { get; set; }
         public bool SelectedOption { get; set; }
-        public List<string> SelectedFilter { get; set; }
+        public List<string> SelectedFilterString { get; set; }
+        public List<int> SelectedFilterInt { get; set; }
+        public List<double> SelectedFilterDouble { get; set; }
+        public List<DateTime> SelectedFilterDateTime { get; set; }
+
     }
+    static DateTime basic = new DateTime(2024, 01, 01, 00, 00, 00);
 
     private List<FilterOption> options = new List<FilterOption>
     {
-        new FilterOption { Filter = "Flash", SelectedOption = false, SelectedFilter = new List<string> { "ON" } },
-        new FilterOption { Filter = "Location", SelectedOption = false, SelectedFilter = new List<string> { "0", "0", "0" } },
-        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilter = new List<string> { "DATE", "9:00AM", "4:00PM" } }
+        new FilterOption { Filter = "Flash", SelectedOption = false, SelectedFilterString = new List<string> { "ON" } },
+        new FilterOption { Filter = "Location", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0, 0.0 } },
+        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilterDateTime = new List<DateTime> {basic, basic, basic} },
+        new FilterOption { Filter = "Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
+        new FilterOption { Filter = "Orientation", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } },
+        new FilterOption { Filter = "Exposure Time", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
+        new FilterOption { Filter = "Shutter Speed Value", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
+        new FilterOption { Filter = "Brightness Value", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
+        new FilterOption { Filter = "Scene Type", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } },
+        new FilterOption { Filter = "Exposure Mode", SelectedOption = false, SelectedFilterString = new List<string> { "Auto" } }, // add dropdown
+        new FilterOption { Filter = "Lens Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
+        new FilterOption { Filter = "File Type", SelectedOption = false, SelectedFilterString = new List<string> { "JPEG" } }, // add dropdown .jpg .heic .png
+        new FilterOption { Filter = "File Name", SelectedOption = false, SelectedFilterString = new List<string> { "IMG_0001" } },
+        new FilterOption { Filter = "File Size", SelectedOption = false, SelectedFilterDouble = new List<double> { 0, 0 } },
+        new FilterOption { Filter = "GPS Altitude", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
+        new FilterOption { Filter = "GPS Img Direction", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
+        new FilterOption { Filter = "GPS Horizontal Positioning Error", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
+        new FilterOption { Filter = "Width", SelectedOption = false, SelectedFilterInt = new List<int> { 0, 0 } },
+        new FilterOption { Filter = "Height", SelectedOption = false, SelectedFilterInt = new List<int> { 0, 0 } },
+        new FilterOption { Filter = "X Resolution", SelectedOption = false, SelectedFilterInt = new List<int> { 0, 0 } },
+        new FilterOption { Filter = "Y Resolution", SelectedOption = false, SelectedFilterInt = new List<int> { 0, 0 } },
+        new FilterOption { Filter = "Software", SelectedOption = false, SelectedFilterString = new List<string> { "Photoshop" } } // add dropdown
     };
 
     private void ToggleOption(int index)
@@ -152,6 +425,45 @@
         }
     }
 
+    private void AllFilter()
+    {
+        foreach (var filter in options)
+        {
+            // For Flash
+            if (filter.Filter == "Flash")
+            {
+                if (filter.SelectedOption)
+                {
+                    if (filter.SelectedFilterString[0] == "ON")
+                    {
+                        responseModel.inputIsFlash = true;
+
+                    } else
+                    {
+                        responseModel.inputIsFlash = false;
+                    }
+                }
+            }
+
+            // For Location
+            if (filter.Filter == "Location")
+            {
+                if (filter.SelectedOption)
+                {
+                    responseModel.inputCoord = filter.SelectedFilterDouble.ToArray();
+                }
+            }
+
+            // For Time Of Day
+            if (filter.Filter == "Time Of Day")
+            {
+                if (filter.SelectedOption)
+                {
+                    responseModel.inputTimeRange = filter.SelectedFilterDateTime.ToArray(); 
+                }
+			}
+		}
+	}
     // Handles the filter submission
     async private Task Success()
     {
