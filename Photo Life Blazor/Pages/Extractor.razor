@@ -52,6 +52,7 @@
 
     private async void googleDrive()
     {
+        user = await GoogleServices.setUp();
         await GoogleServices.getUserPhotos();
     }
     private void NavigateToAlbum()
