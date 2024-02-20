@@ -76,17 +76,15 @@ namespace metadata_extractor
             conn.Close();
         }
 
-        public void insertData()
+        public void InsertData(string path, string user)
 		        {
                     IEnumerable<MetadataExtractor.Directory> directories =
-            ImageMetadataReader.ReadMetadata("C:\\Users\\acer\\OneDrive\\Escritorio\\ALE" +
-            "\\CS\\COMPS\\Metadata Extractor\\metadata_extractor\\metadata_extractor" +
-            "\\IMG_9450.HEIC");
+            ImageMetadataReader.ReadMetadata(path);
                     Dictionary<string, string> dataDict = new Dictionary<string, string>();
                     DataCleaner dataCleaner = new DataCleaner();
                     DataInsert dataInsert = new DataInsert(Constants.connString);
                     int count = 0;
-                    string owner = "hardcodedownerfornow";
+                    string owner = user;
 
                     foreach (var directory in directories)
                     {
