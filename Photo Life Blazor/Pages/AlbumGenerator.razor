@@ -13,7 +13,7 @@
         <div class="modal">
             <div class="modal-content">
                 <div class="spinner"></div>
-                <p>Filtering your albums (responsibly)...</p>
+                <p>Filtering your albums *with integrity*...</p>
             </div>
         </div>
     }
@@ -25,16 +25,16 @@
 
     @* Filter Buttons & Corresponding Filter Options *@
     @* LEFT SIDE FRAME *@
-    <div style="display: flex; margin: 0 10em;">
+    <div style="display: flex; margin: 0 11em;">
         <div style="flex: 1; text-align: left;">
             <div style="margin: .6em 0">
-                <label><h4>Flash:</h4></label>
+                <label><h4>Flash?</h4></label>
                 <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(0)">@GetButtonText(0)</button>
                 <div>
                     @if (options[0].SelectedOption)
                     {
                         <div>
-                            <label><h6>Flash Option:</h6></label>
+                            <label><h4>Flash?</h4></label>
                             <select @bind="options[0].SelectedFilterString[0]">
                                 <option value="ON">Flash On</option>
                                 <option value="OFF">Flash Off</option>
@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div style="margin: .6em 0">
-                <label><h4>Location (By Coordinates):</h4></label>
+                <label><h4>Location (By Coordinates)?</h4></label>
                 <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(1)">@GetButtonText(1)</button>
                 <div>
                     @if (options[1].SelectedOption)
@@ -66,7 +66,7 @@
             </div>
             <div>
             <div style="margin: .6em 0">
-                <label><h4>Time Of Day:</h4></label>
+                <label><h4>Time Of Day?</h4></label>
                 <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(2)">@GetButtonText(2)</button>
                 <div>
                     @if (options[2].SelectedOption)
@@ -84,7 +84,7 @@
                     }
             </div>
             </div>
-                <label><h4>Model:</h4></label>
+                <label><h4>Model?</h4></label>
                 <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(3)">@GetButtonText(3)</button>
                 <div>
                     @if (options[3].SelectedOption)
@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div style="margin: .6em 0">
-		            <label><h4>Orientation:</h4></label>
+		            <label><h4>Orientation?</h4></label>
 		            <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(4)">@GetButtonText(4)</button>
 		            <div>
 			            @if (options[4].SelectedOption)
@@ -113,20 +113,20 @@
 		            </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Exposure Time:</h4></label>
-		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(5)">@GetButtonText(5)</button>
-		                <div>
-			                @if (options[5].SelectedOption)
-			                {
-				                <div>
-					                <label><h6>Exposure Time:</h6></label>
-					                <input @bind="options[5].SelectedFilterDouble[0]" />
-				                </div>
-			                }
-		                </div>
+		            <label><h4>Exposure Time?</h4></label>
+		            <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(5)">@GetButtonText(5)</button>
+		            <div>
+			            @if (options[5].SelectedOption)
+			            {
+				            <div>
+					            <label><h6>Exposure Time:</h6></label>
+					            <input @bind="options[5].SelectedFilterDouble[0]" />
+				            </div>
+			            }
+		            </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Shutter Speed Value:</h4></label>
+		                <label><h4>Shutter Speed Value?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(6)">@GetButtonText(6)</button>
 		                <div>
 			                @if (options[6].SelectedOption)
@@ -139,7 +139,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Brightness Value:</h4></label>
+		                <label><h4>Brightness Value?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(7)">@GetButtonText(7)</button>
 		                <div>
 			                @if (options[7].SelectedOption)
@@ -152,7 +152,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Scene Type:</h4></label>
+		                <label><h4>Scene Type?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(8)">@GetButtonText(8)</button>
 		                <div>
 			                @if (options[8].SelectedOption)
@@ -168,7 +168,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Exposure Mode:</h4></label>
+		                <label><h4>Exposure Mode?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(9)">@GetButtonText(9)</button>
 		                <div>
 			                @if (options[9].SelectedOption)
@@ -185,7 +185,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Lens Model:</h4></label>
+		                <label><h4>Lens Model?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(10)">@GetButtonText(10)</button>
 		                <div>
 			                @if (options[10].SelectedOption)
@@ -202,7 +202,7 @@
     @* RIGHT SIDE FRAME *@
         <div style="flex: 1; text-align: left;">
             <div style="margin: .6em 0">
-		                <label><h4>File Type:</h4></label>
+		                <label><h4>File Type?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(11)">@GetButtonText(11)</button>
 		                <div>
 			                @if (options[11].SelectedOption)
@@ -219,7 +219,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>File Name:</h4></label>
+		                <label><h4>File Name?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(12)">@GetButtonText(12)</button>
 		                <div>
 			                @if (options[12].SelectedOption)
@@ -232,7 +232,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>File Size:</h4></label>
+		                <label><h4>File Size?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(13)">@GetButtonText(13)</button>
 		                <div>
 			                @if (options[13].SelectedOption)
@@ -245,7 +245,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>GPS Altitude:</h4></label>
+		                <label><h4>GPS Altitude?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(14)">@GetButtonText(14)</button>
 		                <div>
 			                @if (options[14].SelectedOption)
@@ -258,7 +258,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>GPS Img Direction:</h4></label>
+		                <label><h4>GPS Img Direction?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(15)">@GetButtonText(15)</button>
 		                <div>
 			                @if (options[15].SelectedOption)
@@ -271,7 +271,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>GPS Horizontal Position Error:</h4></label>
+		                <label><h4>GPS Horizontal Position Error?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(16)">@GetButtonText(16)</button>
 		                <div>
 			                @if (options[16].SelectedOption)
@@ -284,7 +284,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Width:</h4></label>
+		                <label><h4>Width?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(17)">@GetButtonText(17)</button>
 		                <div>
 			                @if (options[17].SelectedOption)
@@ -297,7 +297,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Height:</h4></label>
+		                <label><h4>Height?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(18)">@GetButtonText(18)</button>
 		                <div>
 			                @if (options[18].SelectedOption)
@@ -310,7 +310,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>X Resolution:</h4></label>
+		                <label><h4>X Resolution?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(19)">@GetButtonText(19)</button>
 		                <div>
 			                @if (options[19].SelectedOption)
@@ -323,7 +323,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Y Resolution:</h4></label>
+		                <label><h4>Y Resolution?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(20)">@GetButtonText(20)</button>
 		                <div>
 			                @if (options[20].SelectedOption)
@@ -336,7 +336,7 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>Software:</h4></label>
+		                <label><h4>Software?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(21)">@GetButtonText(21)</button>
 		                <div>
 			                @if (options[21].SelectedOption)
@@ -362,7 +362,7 @@
         @* Error if no options chosen *@
         @if (noOptionChosen == true)
         {
-            <p>You must choose at least one filter option to run the album generator algorithm.</p>
+            <p><i>You must choose at least one filter option to run the album generator algorithm.</i></p>
         }
     
         @* Success Messsage that shows after albums have been created *@
@@ -387,12 +387,12 @@
 @code {
     [Parameter] public string user { get; set; }
 
-    // keeps track of filters and the loading screen
-    private Boolean noOptionChosen = false;
-    private Boolean Done = false;
-    private int numOfFilters = 0;
-    private bool isLoading = false;
+    private Boolean noOptionChosen = false; // tracks whether any options have been chosen
+    private Boolean Done = false; // determines if the albums have been generated
+    private int numOfFilters = 0; // counts filters chosen
+    private bool isLoading = false; // loading screen
 
+    @* List Data for the API *@
     private ResponseModel responseModel = new ResponseModel();
 
     public class FilterOption
@@ -673,11 +673,10 @@
             noOptionChosen = false;
             isLoading = true;
             StateHasChanged();
-            await Task.Delay(3333);
+            await Task.Delay(5555);
 
-            // Call the Album Generator API and wait for respone.
-            //await AlbumGenerator.Sum();
-            //curl -X POST
+            // Call the Album Generator API with list and wait for respone.
+            // await curl -X POST https://localhost:7214/api/controller/GetFilteredData -d '{"username": {user}, "connString": {options} }' -H "content-type: application/json";
 
             // Turn Loading Screen Off and notify user to check their drive
             isLoading = false;

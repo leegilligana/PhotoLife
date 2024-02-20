@@ -1,91 +1,116 @@
-﻿@page "/profile_results/{user}/{Data}"
-@inject NavigationManager NavigationManager
-@using System.Collections.Generic
+﻿@using System.Collections.Generic
 
 <PageTitle>PhotoLife: New Profile</PageTitle>
 
-@* Title and Description *@
 <div class="text-center">
-    <h1>New Profile Generated! <br /> Here are some stats about the photos you provided:</h1>
+    @* Title and Description *@
+    <div class="text-center my-2" style="margin: 0 4em">
+        <h1>New Profile Generated!</h1>
+        <h5>Below are the insights that our algorithm gathered from the photos you provided. Here are the stats you chose:</h5>
+    </div>
 
-    @if (TimeOfDayHeader)
-    {
-        <div>
-            <h3>Your photos were most likely taken in the:</h3>
-            <h5>@TimeOfDay</h5>
-        </div>
-    }
+    @* Headers With Profile Data! *@
+    <div style="margin: 2.2em 0;">
+        @if (TimeOfDayHeader)
+        {
+            <div style="margin-bottom: 2em;">
+                <h3>Your photos were most likely taken in the:</h3>
+                <h5 style="color: #c24aff;"><b>@TimeOfDay</b></h5>
+            </div>
+        }
 
-    @if (WeekDayHeader)
-    {
-        <div>
-            <h3>The day of the week that your photos were probably taken on:</h3>
-            <h5>@WeekDay</h5>
-        </div>
-    }
+        @if (WeekDayHeader)
+        {
+            <div style="margin-bottom: 2em;">
+                <h3>The day of the week that your photos were probably taken on:</h3>
+                <h5 style="color: #c24aff;"><b>@WeekDay</b></h5>
+            </div>
+        }
 
-    @if (GPSHeader)
-    {
-        <div>
-            <h3>Your spend a lot of time in:</h3>
-            <h5>@GPS</h5>
-        </div>
-    }
+        @if (GPSHeader)
+        {
+            <div style="margin-bottom: 2em;">
+                <h3>You spend a lot of time in:</h3>
+                <h5 style="color: #c24aff;"><b>@GPS</b></h5>
+            </div>
+        }
 
-    @if (CameraModelHeader)
-    {
-        <div>
-            <h3>Your most used Camera Model is:</h3>
-            <h5>@CameraModel</h5>
-        </div>
-    }
+        @if (CameraModelHeader)
+        {
+            <div style="margin-bottom: 2em;">
+                <h3>Most used Camera Model:</h3>
+                <h5 style="color: #c24aff;"><b>@CameraModel</b></h5>
+            </div>
+        }
+        @if (BrightnessHeader)
+        {
+            <div style="margin-bottom: 2em;">
+                <h3>Most common Brightness Mode:</h3>
+                <h5 style="color: #c24aff;"><b>@Brightness</b></h5>
+            </div>
+        }
+    </div>
 </div>
 
 @code {
     [Parameter]
-    public string Data { get; set; }
-    [Parameter]
-    public string user { get; set; }
+    public List<string> Headers { get; set; }
+    // public string ProfileData { get; set; }
 
-    private List<string> presetHeaders { get; set; }
-    protected override void OnInitialized()
+    private Boolean TimeOfDayHeader = false, 
+                    WeekDayHeader = false, 
+                    GPSHeader = false, 
+                    CameraModelHeader = false, 
+                    BrightnessHeader = false;
+    private string TimeOfDay = "", 
+                    WeekDay = "", 
+                    GPS = "", 
+                    CameraModel = "",
+                    Brightness = "";
+
+    private List<string> presetHeaders = new List<string>();
+    private List<string> presetProfileData = new List<string>();
+
+    // set the headers that were chosen from the presets
+    private void SetHeaders()
     {
-        if (!string.IsNullOrEmpty(Data))
-        {
-            presetHeaders = Data.Split('-').ToList();
-        }
-    }
-
-    private Boolean TimeOfDayHeader = false, WeekDayHeader = false, GPSHeader = false, CameraModelHeader = false;
-    private string TimeOfDay = "MORNING", WeekDay = "TUESDAY", GPS = "NORTHFIELD, MN", CameraModel = "IPHONE 11 PRO";
-
-    // Set headers
-    protected override void OnParametersSet()
-    {
+        presetHeaders = Headers;
         foreach (string preset in presetHeaders)
         {
             if (preset == "Time Of Day")
             {
                 TimeOfDayHeader = true;
             }
-            else if (preset == "GPS")
+            else if (preset == "Week Day")
             {
                 WeekDayHeader = true;
             }
-            else if (preset == "Camera Model")
+            else if (preset == "GPS")
             {
                 GPSHeader = true;
             }
-            else if (preset == "Week Day")
+            else if (preset == "Camera Model")
             {
                 CameraModelHeader = true;
             }
         }
     }
 
-    // Grab data from profile maker algorithm
-    private void GetStats()
+    // set the data from the profile algorithm
+    private void SetProfileData()
     {
-        //get data from API
+        // REPLACE WITH DATA FROM API
+        TimeOfDay = "MORNING"; 
+        WeekDay = "TUESDAY";
+        GPS = "NORTHFIELD, MN";
+        CameraModel = "IPHONE 11 PRO";
+        Brightness = "HIGH";
+    }
+
+    // Setup all the headers and data
+    protected override void OnInitialized()
+    {
+        SetHeaders();
+        SetProfileData();
     }
 }

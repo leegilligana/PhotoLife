@@ -30,6 +30,11 @@
                 2) Create a Profile based on your photo metadata charateristics. [Right]
                 <br />Please click on an option below:
             </h5>
+            @* Error Msg if not signed in *@
+            @if (noSignIn == true)
+            {
+                <p><i>You must sign into Google before moving forward.</i></p>
+            }
             <div class="container">
                 <div class="album">
                     <div class="p-lg-4">
@@ -47,20 +52,47 @@
 </div>
 
 @code {
-    // take user email WITHOUT the @
-    private string user = "champlisst";
+    private string user = "";
+    private bool noSignIn = false; // keeps track of if the user is signed in or not
 
     private async void googleDrive()
     {
-        user = await GoogleServices.setUp();
-        await GoogleServices.getUserPhotos();
+        // user = await GoogleServices.getUserPhotos();
+        user = "photolife@carleton.edu";
+        // Remove the @ and domain from the user's email
+        string[] emailParts = user.Split('@');
+        user = emailParts[0];
+        noSignIn = false;
     }
+
+    private bool userSignedIn()
+    {
+        if (user != "") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private void NavigateToAlbum()
     {
-        NavigationManager.NavigateTo($"/album/{user}");
+        if (userSignedIn())
+        {
+            noSignIn = false;
+            NavigationManager.NavigateTo($"/album/{user}");
+        } else {
+            noSignIn = true;
+        }
     }
+
     private void NavigateToProfile()
     {
-        NavigationManager.NavigateTo($"/profile/{user}");
+        if (userSignedIn())
+        {
+            noSignIn = false;
+            NavigationManager.NavigateTo($"/profile/{user}");
+        } else {
+            noSignIn = true;
+        }
     }
 }

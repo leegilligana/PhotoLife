@@ -3,38 +3,44 @@
 @using System.Collections.Generic
 @using System.Text.Json
 
-
 <PageTitle>PhotoLife: Profile Maker</PageTitle>
 
 <div class="text-center" id="no-scroll-bar">
-    @* Loading PopUp for when the profile is being generated *@
-    @if (isLoading)
+    @if (!newProfileGenerated)
     {
-        <div class="modal">
-            <div class="modal-content">
-                <div class="spinner"></div>
-                <p>Using your data to build a profile *ethically*...</p>
+        @* Loading PopUp for when the profile is being generated *@
+        @if (isLoading)
+        {
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="spinner"></div>
+                    <p>Using your data to build a profile *ethically*...</p>
+                </div>
             </div>
+        }
+        @* Title and Description *@
+        <div class="text-center my-2" style="margin: 0 4em">
+            <h1>Profile Maker</h1>
+            <h5>Please choose at least one of the profile stats you would like to see about your photos below.</h5>
         </div>
-    }
-    @* Title and Description *@
-    <div class="text-center my-2" style="margin: 0 4em">
-        <h1>Profile Maker</h1>
-        <h5>Please choose at least one of the photo profile stats you would like to see about your photos below.</h5>
-    </div>
-    <div class="container">
+        <div class="container p-lg-2">
             @foreach (var preset in options)
             {
-                <input type="checkbox" checked="@preset.isChecked" @onchange="e => UpdateSelection(preset)" />@preset.Name
+                <input type="checkbox" style="width: 1em; height: 1em; margin: 1em;" checked="@preset.isChecked" @onchange="e => UpdateSelection(preset)">
+                <label><h4>@preset.Name</h4></label>
                 <br />
             }
-    </div>
-    <div class="p-lg-4">
-        <button class="btn btn-default btn-main" @onclick="AddSelectedPresets"><h4>Get My Profile!</h4></button>
-    </div>
-    @if (noOptionsChosen == true)
+        </div>
+        <div class="p-lg-4">
+            <button class="btn btn-default btn-main" @onclick="AddSelectedPresets"><h4>Get My Profile!</h4></button>
+        </div>
+        @if (noOptionsChosen == true)
+        {
+            <p><i>You must choose at least one option to run the profile maker algorithm.</i></p>
+        }
+    } else
     {
-        <p>You must choose at least one option to run the profile maker algorithm.</p>
+        <NewProfile Headers=(onlyPresetNames) />
     }
 </div>
 
@@ -42,9 +48,10 @@
     [Parameter]
     public string user { get; set; }
 
-    private Boolean noOptionsChosen = false;
-    private bool isLoading = false;
-    private List<string> onlyPresetNames = new List<string>();
+    private bool noOptionsChosen = false; // presets
+    private bool isLoading = false; // loading screen
+    private List<string> onlyPresetNames = new List<string>(); // preset headers for the profile stats
+    private bool newProfileGenerated = false; // switches from profile maker to profile stats
 
     public class PresetOption
     {
@@ -67,6 +74,7 @@
         option.isChecked = !option.isChecked;
     }
 
+    // adds all the selected options to a headers list for the stats
     async private Task AddSelectedPresets()
     {
         selectedPresets = options.Where(f => f.isChecked).ToList();
@@ -82,24 +90,26 @@
         else
         {
             noOptionsChosen = false;
-            await NavigateToNewProfile();
+            await SetUpNewProfile();
         }
     }
 
-    async private Task NavigateToNewProfile()
-    {
-        //NavigationManager.NavigateTo($"/profile_results/{Uri.EscapeDataString(JsonSerializer.Serialize(onlyPresetNames))}");
-        
+    // start loading screen, ask for data, and send to the new profile component
+    async private Task SetUpNewProfile()
+    {        
         isLoading = true;
         StateHasChanged();
-        await Task.Delay(3333);
+        await Task.Delay(5555);
 
         // Call the Profile Maker API and wait for respone.
         //await ProfileMaker.Sum("");
-        //send data to next page or call api in the new profile? OR keep everything on this page?
+        //send data to next page or call api in the new profile? OR keep everything on this page??????????????????????????????????????????
+        //await curl - X POST https://localhost:7214/api/.... -d '{"username": {user}, "connString": {selectedPresets} }' - H "content-type: application/json";
+
 
         isLoading = false;
         StateHasChanged();
-        NavigationManager.NavigateTo($"/profile_results/{user}/{Uri.EscapeDataString(string.Join('-', onlyPresetNames))}");
+        newProfileGenerated = true;
+        //NavigationManager.NavigateTo($"/profile_results/{user}/{Uri.EscapeDataString(string.Join('-', onlyPresetNames))}");
     }
 }
