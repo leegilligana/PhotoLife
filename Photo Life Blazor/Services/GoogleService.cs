@@ -11,6 +11,7 @@ using Google.Apis.Oauth2.v2;
 using System.Security.Cryptography.Xml;
 using Newtonsoft.Json;
 using System.Text;
+using System.Linq.Expressions;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -78,6 +79,7 @@ namespace Photo_Life_Blazor.Services
             var previousIds = await getStoredPhotos(username);
             request.Q = "mimeType contains 'image/' and trashed = false and '" + folderID + "' in parents";
             var fileList = await request.ExecuteAsync();
+            
             foreach (var file in fileList.Files)
             {
                 if (!(previousIds.Contains(file.Id)))
@@ -141,6 +143,24 @@ namespace Photo_Life_Blazor.Services
             }
             return 1;
         }
+        
+        public async Task<string> sendFilePathstoDB(List<string> Ids)
+        {
+            Console.WriteLine("Sending to DB");
+            var pathStr = "{username : "+username+",paths : [";
+            foreach (var id in Ids)
+            {
+                pathStr += (id + ",");
+            }
+            pathStr = pathStr.TrimEnd(',');
+            pathStr += "]}";
+            Console.WriteLine(pathStr);
+            var content = new StringContent(pathStr, Encoding.UTF8, "application/json");
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await client.PostAsync("https://localhost:7214/api/metadata/InsertToDB", content);
+            return await response.Content.ReadAsStringAsync();
+        }
         public void deleteFiles(List<string> Ids)
         {
             foreach (var id in Ids)
@@ -202,18 +222,20 @@ namespace Photo_Life_Blazor.Services
             }
 
         }
-        public async Task getUserPhotos()
+        public async Task<string> getUserPhotos()
         {
             await setUp();
             var ids = await getFileIds();
             var memoryStreams = await downloadFiles(ids);
             var fileCreation = await writeStreamstoFile(memoryStreams, ids);
             var folder = await createFolder("testing");
+            Console.WriteLine(await sendFilePathstoDB(ids));
             await movePhotos(ids, folder);
             if (fileCreation == 1)
             {
                 deleteFiles(ids);
             }
+            return username;
         }
     }
 }
