@@ -36,10 +36,37 @@ namespace ProfileMaker
         /** 
          * Return string of the period of the day photos are dated/taken on average
          */
-        public string AvePeriodTaken(PFQueries q, DateTime s, DateTime e)
+        public string AveTimeTaken(PFQueries q, DateTime s, DateTime e)
         {
+            var dates = q.Dates(s, e);
 
-            return "";
+            if (dates.Count <= 1)
+            {
+                return "0";
+            }
+            else
+            {
+
+                double sinSum = 0.0;
+                double cosSum = 0.0;
+
+                foreach (DateTime time in dates)
+                {
+                    double radians = 2 * Math.PI * time.TimeOfDay.TotalHours / 24;
+                    sinSum += Math.Sin(radians);
+                    cosSum += Math.Cos(radians);
+                }
+
+                double avgRadians = Math.Atan2(sinSum / dates.Count, cosSum / dates.Count);
+                double avgHours = 24 * avgRadians / (2 * Math.PI);
+
+                if (avgHours < 0)
+                {
+                    avgHours += 24;
+                }
+
+                return TimeSpan.FromHours(avgHours).ToString();
+            }
         }
 
         /** 
@@ -93,16 +120,16 @@ namespace ProfileMaker
          * Returns string of the most frequent camera model used, as well as the photos using
          * that camera model.
          */
-        public string MostFreqCameraModel(PFQueries q)
+        public string MostFreqCamModel(PFQueries q)
         {
             var models = q.ModelDict();
             int count_old = 0;
             int count_new = 0;
             string most_freq_model = "";
             string[] model_arr = { };
-            foreach (var cammodel in models)
+            foreach (var photo in models)
             {
-                if (!model_arr.Contains(cammodel.Value)) { model_arr.Append(cammodel.Value); }
+                if (!model_arr.Contains(photo.Value)) { model_arr.Append(photo.Value); }
             }
 
             if (models.Count <= 1)
@@ -113,15 +140,15 @@ namespace ProfileMaker
             {
                 foreach (var item in model_arr)
                 {
-                    foreach (var cammodel in models)
+                    foreach (var photo in models)
                     {
-                        if (item == cammodel.Value)
+                        if (item == photo.Value)
                         {
                             count_new++;
                         }
                         if (count_new > count_old)
                         {
-                            most_freq_model = cammodel.Value;
+                            most_freq_model = photo.Value;
                             break;
                         }
                     }
@@ -156,17 +183,15 @@ namespace ProfileMaker
         {
             var connString = "Host=cs400f23acd.mathcs.carleton.edu;Username=photolife;" +
             "Password=BlueWTRgrass23&;Database=photolife";
-            var dataSourceBuilder = new NpgsqlDataSourceBuilder(connString);
-            var dataSource = dataSourceBuilder.Build();
-            var conn = dataSource.OpenConnection();
 
             Program program = new Program();
             PFQueries q_lookup = new PFQueries(connString, "Alejandro");
 
             DateTime s = new DateTime(2001, 1, 1);
             DateTime e = new DateTime(2024, 1, 31);
-            Console.WriteLine(program.PhotoTakingFreq(q_lookup, s, e));
-
+            Profile usr_profile = new Profile();
+            usr_profile.CameraModel = program.MostFreqCamModel(q_lookup);
+            Console.WriteLine(usr_profile.CameraModel);
         }
     }
 }

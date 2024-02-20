@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProfileMaker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0a9095ae0a5625d5ff51fab4c08943a9b74ccc4c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0696127890820daa2a9d06e448abd44a350c7d18")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProfileMaker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProfileMaker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

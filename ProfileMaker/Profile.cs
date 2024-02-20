@@ -9,16 +9,12 @@ namespace Profiles
 {
     internal class Profile
     {
-        public string? PhotoTakingFreq { get; }
-        public Dictionary<string, string>? PhotoDateOrder { get; }
-        public Dictionary<string, string>? CameraModels { get; }
-        public string? Flash { get; }
-        public string? DeviceModels { get; }
-        public string? GpsCords { get; }
-
-        public Profile()
-        {
-
-        }
+        public string? PhotoTakingFreq { get; set; } = "";
+        public string? AveTimeTaken { get; set; } = "";
+        public string? AveDayTaken { get; set; } = "";
+        public string? CameraModel { get; set; } = "";
+        public string? Flash { get; set; } = "";
+        public string? BrightnessValu { get; set; } = "";
+        public string? GpsCords { get; set; } = "";
     }
 }
