@@ -7,6 +7,7 @@ using metadata_extractor.Models;
 using MetadataExtractor.Util;
 using static System.Collections.Specialized.BitVector32;
 using System.ComponentModel;
+using metadata_extractor;
 
 namespace metadata_extractor.Controllers
 {
@@ -110,6 +111,24 @@ namespace metadata_extractor.Controllers
         {
             Queries queries = new Queries(Constants.connString, responseModel.username);
             return queries.getAll();
+        }
+
+        [HttpPost("[action]")]
+        public bool InsertToDB([FromBody] Paths pathList) 
+        {
+            try
+            {
+                DataInsert inserter = new DataInsert(Constants.connString);
+                foreach (string path in pathList.file_paths)
+                {
+                    inserter.InsertData((string)path, (string)pathList.owner);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

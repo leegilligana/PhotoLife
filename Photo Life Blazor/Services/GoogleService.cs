@@ -12,6 +12,7 @@ using System.Security.Cryptography.Xml;
 using Newtonsoft.Json;
 using System.Text;
 using System.Linq.Expressions;
+using System.IO;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -147,15 +148,17 @@ namespace Photo_Life_Blazor.Services
         public async Task<string> sendFilePathstoDB(List<string> Ids)
         {
             Console.WriteLine("Sending to DB");
-            var pathStr = "{username : "+username+",paths : [";
+            string base_path  = System.IO.Directory.GetCurrentDirectory() + "\\Photos\\";
+            base_path = base_path.Replace(@"\", @"\\");
+            var pathStr = "{\"owner\" : \""+username+"\",\"file_paths\" : [";
             foreach (var id in Ids)
             {
-                pathStr += (id + ",");
+                pathStr += ("\""+base_path + id + "\",");
             }
             pathStr = pathStr.TrimEnd(',');
             pathStr += "]}";
-            Console.WriteLine(pathStr);
             var content = new StringContent(pathStr, Encoding.UTF8, "application/json");
+            Console.WriteLine(pathStr);
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var response = await client.PostAsync("https://localhost:7214/api/metadata/InsertToDB", content);
@@ -231,10 +234,10 @@ namespace Photo_Life_Blazor.Services
             var folder = await createFolder("testing");
             Console.WriteLine(await sendFilePathstoDB(ids));
             await movePhotos(ids, folder);
-            if (fileCreation == 1)
-            {
-                deleteFiles(ids);
-            }
+            //if (fileCreation == 1)
+            //{
+            //    deleteFiles(ids);
+            //}
             return username;
         }
     }

@@ -64,29 +64,27 @@ namespace metadata_extractor
         {
             var arr1 = noQuote(data, noQuoteList);
             var arr2 = withQuote(data, quoteList);
-            var command = $"INSERT INTO photolife (Owner, {arr1[0] + arr2[0]}) VALUES " +
-                        $"('@owner', {arr1[1] + arr2[1]});";
+            var command = $"INSERT INTO photolife (owner, {arr1[0] + arr2[0]}) VALUES " +
+                        $"(\'{owner}\', {arr1[1] + arr2[1]});";
             Console.WriteLine(command);
             using (var cmd = new NpgsqlCommand(
                         command, conn))
             {
-                cmd.Parameters.AddWithValue("Owner", owner);
+                cmd.Parameters.AddWithValue("owner", owner);
                 cmd.ExecuteNonQuery();
             };
             conn.Close();
         }
 
-        public void insertData()
+        public void InsertData(string path, string user)
 		        {
                     IEnumerable<MetadataExtractor.Directory> directories =
-            ImageMetadataReader.ReadMetadata("C:\\Users\\acer\\OneDrive\\Escritorio\\ALE" +
-            "\\CS\\COMPS\\Metadata Extractor\\metadata_extractor\\metadata_extractor" +
-            "\\IMG_9450.HEIC");
+            ImageMetadataReader.ReadMetadata(path);
                     Dictionary<string, string> dataDict = new Dictionary<string, string>();
                     DataCleaner dataCleaner = new DataCleaner();
                     DataInsert dataInsert = new DataInsert(Constants.connString);
                     int count = 0;
-                    string owner = "hardcodedownerfornow";
+                    string owner = user;
 
                     foreach (var directory in directories)
                     {
