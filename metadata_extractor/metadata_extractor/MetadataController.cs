@@ -116,6 +116,7 @@ namespace metadata_extractor.Controllers
         [HttpPost("[action]")]
         public bool InsertToDB([FromBody] Paths pathList) 
         {
+            int count = 0;
             try
             {
                 DataInsert inserter = new DataInsert(Constants.connString);
@@ -123,10 +124,12 @@ namespace metadata_extractor.Controllers
                 {
                     inserter.InsertData((string)path, (string)pathList.owner);
                 }
+                inserter.CloseConn();
                 return true;
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return false;
             }
         }
