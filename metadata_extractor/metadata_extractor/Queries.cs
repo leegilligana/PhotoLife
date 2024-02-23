@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Npgsql;
 using System.Device.Location;
 using NpgsqlTypes;
+using Microsoft.AspNetCore.SignalR.Protocol;
 
 namespace DB_Queries
 {
@@ -21,6 +22,11 @@ namespace DB_Queries
             conn = dataSource.OpenConnection();
             owner = user;
 
+        }
+
+        public void CloseConnection()
+        {
+            conn.Close();
         }
 
         public string[] Flash(bool isFlash)
@@ -177,6 +183,7 @@ namespace DB_Queries
         public string[] LensModel(string lensModel)
         {
             var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND lens_model LIKE '%{lensModel}%';", conn);
+            cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 

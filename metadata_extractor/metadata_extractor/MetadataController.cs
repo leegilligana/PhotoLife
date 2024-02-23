@@ -103,6 +103,7 @@ namespace metadata_extractor.Controllers
             }
             
             String[] finalFilteredResult = queries.finalResult(listOfFilteredPhotos);
+            queries.CloseConnection();
             return finalFilteredResult;
         }
 
