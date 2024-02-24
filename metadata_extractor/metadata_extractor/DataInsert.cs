@@ -107,6 +107,9 @@ namespace metadata_extractor
                                 }
                     }
 
+                    File.Delete(path);
+
+
                     dataCleaner.formatData(dataDict, Constants.removeUnits, Constants.pointToArrayFields, Constants.doubles);
                     foreach (KeyValuePair<string, string> author in dataDict)
                     {

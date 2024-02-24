@@ -45,7 +45,7 @@ namespace Photo_Life_Blazor.Services
 
                 "user",
                 CancellationToken.None,
-                new FileDataStore("PhotoLife")) ;
+                new FileDataStore("PhotoLife"));
             driveService ??= new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
@@ -172,14 +172,6 @@ namespace Photo_Life_Blazor.Services
             var response = await client.PostAsync("https://localhost:7214/api/metadata/InsertToDB", content);
             return await response.Content.ReadAsStringAsync();
         }
-        public void deleteFiles(List<string> Ids)
-        {
-            foreach (var id in Ids)
-            {
-                var path = System.IO.Directory.GetCurrentDirectory();
-                File.Delete(path + "\\Photos\\" + id);
-            }
-        }
 
         public async Task<string> createFolder(string folderName)
         {
@@ -195,7 +187,7 @@ namespace Photo_Life_Blazor.Services
             Console.WriteLine("Folder ID: " + file.Id);
             return file.Id;
         }
-        public async Task movePhotos(List<string> PhotoIds, string folderId)
+        public async Task<bool> movePhotos(List<string> PhotoIds, string folderId)
         {
             foreach (var id in PhotoIds)
             {
@@ -206,6 +198,7 @@ namespace Photo_Life_Blazor.Services
                 request.AddParents = folderId;
                 await request.ExecuteAsync();
             }
+            return true;
         }
         public async Task<List<string>> getStoredPhotos(string username)
         {
@@ -240,25 +233,16 @@ namespace Photo_Life_Blazor.Services
             var ids = await getFileIds();
             var memoryStreams = await downloadFiles(ids);
             var fileCreation = await writeStreamstoFile(memoryStreams, ids);
-            //var folder = await createFolder("testing");
-            Console.WriteLine(await sendFilePathstoDB(ids, fileCreation));
-            //await movePhotos(ids, folder);
-            //if (fileCreation == 1)
-            //{
-            //    deleteFiles(ids);
-            //}
-            return username;
+            var result  = await sendFilePathstoDB(ids, fileCreation);
+            
+            return result;
         }
         public async Task<bool> albumGenerator(ResponseModel options)
         {
+            bool result = false;
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            //Console.WriteLine(test);
-            //Console.WriteLine("{\"username\": \"" + username + "\"," +
-            //                                 "\"options\" : \"" + options + "\"}");
             string options_string = Newtonsoft.Json.JsonConvert.SerializeObject(options);
-            //options_string = options_string.Replace("{", "");
-            //options_string = options_string.Replace("}", "");
             var content = new StringContent(options_string, Encoding.UTF8,
                                     "application/json");
             var response = await client.PostAsync("https://localhost:7214/api/metadata/GetFilteredData", content);
@@ -273,9 +257,13 @@ namespace Photo_Life_Blazor.Services
                 var list_ids = ids.Split(",").ToList();
                 Console.WriteLine("IDS:");
                 Console.WriteLine(ids);
-                string folderId = await createFolder("output");
-                await movePhotos(list_ids, folderId);
-                return true;
+                if (ids.Length > 0)
+                {
+                    string dateTime = DateTime.Now.ToString();
+                    string folderId = await createFolder("output-"+dateTime);
+                    result = await movePhotos(list_ids, folderId);
+                }
+                return result;
             }
             else
             {
