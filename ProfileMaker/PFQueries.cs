@@ -9,6 +9,7 @@ using System.Device.Location;
 using NpgsqlTypes;
 using Unsplasharp.Models;
 using System.Data;
+using System.Collections;
 
 namespace DB_Queries
 {
@@ -48,21 +49,19 @@ namespace DB_Queries
             Dictionary<string, string> dct = new Dictionary<string, string>();
             while (reader.Read())
             {
-                dct.Add(reader.GetString(reader.GetOrdinal("file_name")),
-                        reader.GetString(reader.GetOrdinal("model")));
+                try
+                {
+                    dct.Add(reader.GetString(reader.GetOrdinal("file_name")),
+                            reader.GetString(reader.GetOrdinal("model")));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
             }
             reader.Close();
             return dct;
-        }
-
-        public string[] DateTimeRange(DateTime start, DateTime end)
-        {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND " +
-                "date_time >= @start AND date_time <= @end;", conn);
-            cmd.Parameters.AddWithValue("start", start);
-            cmd.Parameters.AddWithValue("end", end);
-            cmd.Parameters.AddWithValue("owner", owner);
-            return DataReader(cmd.ExecuteReader());
         }
 
         // returns list of datetimes
@@ -86,23 +85,43 @@ namespace DB_Queries
             return dates;
         }
 
-        // Returns dictionary of photo file names ordered by ascending date
-        public Dictionary<string, string> PhotoChronologie(DateTime start, DateTime end)
+        public List<DateTime> DatesNoParam()
         {
-            var cmd = new NpgsqlCommand("SELECT file_name, date_time FROM photolife WHERE " +
-                "owner = @owner AND date_time >= @start AND date_time <= @end ORDER BY date_time ASC;", conn);
+            var cmd = new NpgsqlCommand("SELECT date_time FROM photolife WHERE " +
+                "owner = @owner ORDER BY date_time;", conn);
+            cmd.Parameters.AddWithValue("owner", owner);
+            var reader = cmd.ExecuteReader();
+
+            List<DateTime> dates = new List<DateTime>();
+            int i = 0;
+            while (reader.Read())
+            {
+                dates.Add(reader.GetDateTime("date_time"));
+                i++;
+            }
+            reader.Close();
+            return dates;
+        }
+
+        // Need to fix; does not return average time from date_time yet
+        public string DayTimeAve(DateTime start, DateTime end)
+        {
+            var cmd = new NpgsqlCommand("SELECT AVE(EXTRACT(HOUR FROM date_time))::timestamp FROM photolife WHERE " +
+                "owner = @owner AND date_time >= @start AND date_time <= @end ORDER BY date_time;", conn);
             cmd.Parameters.AddWithValue("start", start);
             cmd.Parameters.AddWithValue("end", end);
             cmd.Parameters.AddWithValue("owner", owner);
             var reader = cmd.ExecuteReader();
+            return reader.GetString(reader.GetOrdinal("avg"));
+        }
 
-            Dictionary<string, string> dct = new Dictionary<string, string>();
-            while (reader.Read())
-            {
-                dct.Add(reader.GetString("file_name"), reader.GetDateTime("date_time").ToString());
-            }
-            reader.Close();
-            return dct;
+        public string DayTimeAveNoParam()
+        {
+            var cmd = new NpgsqlCommand("SELECT AVE(EXTRACT(HOUR FROM date_time))::timestamp FROM photolife WHERE " +
+                "owner = @owner ORDER BY date_time;", conn);
+            cmd.Parameters.AddWithValue("owner", owner);
+            var reader = cmd.ExecuteReader();
+            return reader.GetString(reader.GetOrdinal("avg"));
         }
 
         public string[] Location(double inputLat, double inputLong, int inputDistance)
@@ -217,18 +236,16 @@ namespace DB_Queries
             return DataReader(cmd.ExecuteReader());
         }
 
-        public List<double> BrightnessValueList()
+        // returns list of brightness values from photos having it in the database
+        public string BrightnessValueList()
         {
-            var cmd = new NpgsqlCommand("SELECT brightness_value FROM photolife WHERE owner = @owner;", conn);
+            var cmd = new NpgsqlCommand("SELECT AVG(CAST(brightness_value AS decimal)) FROM photolife WHERE owner = @owner;", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             var reader = cmd.ExecuteReader();
-            List<double> bright_values = new List<double>();
-            while (reader.Read())
-            {
-                bright_values.Add(reader.GetDouble(reader.GetOrdinal("brightness_value")));
-            }
+            string bright_value = reader.GetString(0);
+
             reader.Close();
-            return bright_values;
+            return bright_value;
         }
 
         public string[] SceneType(string sceneType)

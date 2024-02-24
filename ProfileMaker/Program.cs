@@ -10,9 +10,9 @@ namespace ProfileMaker
          * Returns a string representing the average timespan a string took their photos
          * between a specified start and end date 
         */
-        public string PhotoTakingFreq(PFQueries q, DateTime s, DateTime e)
+        public string PhotoTakingFreq(PFQueries q)
         {
-            var dates = q.Dates(s, e);
+            var dates = q.DatesNoParam();
 
             if (dates.Count <= 1)
             {
@@ -25,7 +25,6 @@ namespace ProfileMaker
                 {
                     time_diff.Add(dates[i] - dates[i - 1]);
                 }
-
                 double tick_ave = time_diff.Average(d => d.Ticks);
                 TimeSpan ave_dif = TimeSpan.FromTicks((long)tick_ave);
 
@@ -36,45 +35,18 @@ namespace ProfileMaker
         /** 
          * Return string of the period of the day photos are dated/taken on average
          */
-        public string AveTimeTaken(PFQueries q, DateTime s, DateTime e)
+        public string AveTimeTaken(PFQueries q)
         {
-            var dates = q.Dates(s, e);
+            return "NOT FINISHED";
 
-            if (dates.Count <= 1)
-            {
-                return "0";
-            }
-            else
-            {
-
-                double sinSum = 0.0;
-                double cosSum = 0.0;
-
-                foreach (DateTime time in dates)
-                {
-                    double radians = 2 * Math.PI * time.TimeOfDay.TotalHours / 24;
-                    sinSum += Math.Sin(radians);
-                    cosSum += Math.Cos(radians);
-                }
-
-                double avgRadians = Math.Atan2(sinSum / dates.Count, cosSum / dates.Count);
-                double avgHours = 24 * avgRadians / (2 * Math.PI);
-
-                if (avgHours < 0)
-                {
-                    avgHours += 24;
-                }
-
-                return TimeSpan.FromHours(avgHours).ToString();
-            }
         }
 
         /** 
          * Return string of the day of the week photos are dated/taken on average
          */
-        public string AveDayTaken(PFQueries q, DateTime s, DateTime e)
+        public string AveDayTaken(PFQueries q)
         {
-            var dates = q.Dates(s, e);
+            var dates = q.DatesNoParam();
             string[] days_of_weeks = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
             int count_old = 0;
             int count_new = 0;
@@ -112,8 +84,7 @@ namespace ProfileMaker
          */
         public string MostFreqLocation(PFQueries q)
         {
-
-            return "";
+            return "NOT FINISHED";
         }
 
         /**
@@ -126,23 +97,28 @@ namespace ProfileMaker
             int count_old = 0;
             int count_new = 0;
             string most_freq_model = "";
-            string[] model_arr = { };
+            List<string> model_lst = new List<string>();
             foreach (var photo in models)
             {
-                if (!model_arr.Contains(photo.Value)) { model_arr.Append(photo.Value); }
+                if (model_lst.Contains(photo.Value) == false)
+                {
+                    model_lst.Add(photo.Value);
+                    Console.WriteLine("New model:" + model_lst.Last());
+                }
+
             }
 
             if (models.Count <= 1)
             {
-                return "0";
+                return most_freq_model;
             }
             else
             {
-                foreach (var item in model_arr)
+                foreach (var item in model_lst)
                 {
                     foreach (var photo in models)
                     {
-                        if (item == photo.Value)
+                        if (item.Equals(photo.Value))
                         {
                             count_new++;
                         }
@@ -162,36 +138,60 @@ namespace ProfileMaker
         /**
          * Returns string of the location where a user takes their photos most frequently
          */
-        public string AveBrightness(PFQueries q)
+        public string AveBrightnessVal(PFQueries q)
         {
             var brightness_values = q.BrightnessValueList();
-            var ave_value = brightness_values.Average();
-            return ave_value.ToString();
+            return brightness_values;
         }
 
         /**
          * Returns a Profile object, which contains variables representing user-selected 
          * information to grab from their photos
          */
-        public Profile CreateProfile(string filters)
+        public Profile CreateProfile(List<string> filters)
         {
             Profile userProfile = new Profile();
+            var connString = "Host=cs400f23acd.mathcs.carleton.edu;Username=photolife;" +
+            "Password=BlueWTRgrass23&;Database=photolife";
+            PFQueries q = new PFQueries(connString, "gonzaleza@carleton.edu");
+
+            foreach (var filter in filters)
+            {
+                switch (filter)
+                {
+                    case "Time of Day":
+                        userProfile.AveTime = AveTimeTaken(q);
+                        break;
+                    case "GPS":
+                        userProfile.GpsCords = MostFreqLocation(q);
+                        break;
+                    case "Camera Model":
+                        userProfile.CameraModel = MostFreqCamModel(q);
+                        break;
+                    case "Week Day":
+                        userProfile.Weekday = AveDayTaken(q);
+                        break;
+                    case "Brightness":
+                        userProfile.AveBrightness = AveBrightnessVal(q);
+                        break;
+                }
+            }
             return userProfile;
         }
 
+        // Main function used to test the methods above
         static void Main(string[] args)
         {
             var connString = "Host=cs400f23acd.mathcs.carleton.edu;Username=photolife;" +
             "Password=BlueWTRgrass23&;Database=photolife";
 
             Program program = new Program();
-            PFQueries q_lookup = new PFQueries(connString, "Alejandro");
+            PFQueries q_lookup = new PFQueries(connString, "gonzaleza@carleton.edu");
 
-            DateTime s = new DateTime(2001, 1, 1);
-            DateTime e = new DateTime(2024, 1, 31);
+            // DateTime s = new DateTime(2001, 1, 1);
+            // DateTime e = new DateTime(2024, 1, 31);
             Profile usr_profile = new Profile();
-            usr_profile.CameraModel = program.MostFreqCamModel(q_lookup);
-            Console.WriteLine(usr_profile.CameraModel);
+            Console.WriteLine(program.AveBrightnessVal(q_lookup));
         }
     }
 }
