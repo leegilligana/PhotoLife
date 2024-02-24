@@ -1,6 +1,5 @@
 ﻿@page "/profile/{user}"
 @inject NavigationManager NavigationManager
-@inject ProfileMaker ProfileMakerService
 @using System.Collections.Generic
 @using System.Text.Json
 
@@ -41,7 +40,7 @@
         }
     } else
     {
-        <NewProfile Headers=(onlyPresetNames) ProfileData=(profileData)/>
+        <NewProfile Headers=(onlyPresetNames) />
     }
 </div>
 
@@ -103,7 +102,7 @@
     {        
         isLoading = true; // turn loading screen on
         StateHasChanged();
-        profileData = await ProfileMakerService.CreateProfile(onlyPresetNames);
+        // profileData = await ProfileMakerService.CreateProfile(onlyPresetNames);
         isLoading = false;
         StateHasChanged();
         newProfileGenerated = true; // send data to new profile template
