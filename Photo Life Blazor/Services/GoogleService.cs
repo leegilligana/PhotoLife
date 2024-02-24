@@ -8,11 +8,14 @@ using Google.Apis.Drive.v3;
 using Google.Apis.Download;
 using System.Net.Http.Headers;
 using Google.Apis.Oauth2.v2;
+using Photo_Life_Blazor.Models;
 using System.Security.Cryptography.Xml;
 using Newtonsoft.Json;
 using System.Text;
 using System.Linq.Expressions;
 using System.IO;
+using Google.Apis.Json;
+using metadata_extractor.Models;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -24,12 +27,14 @@ namespace Photo_Life_Blazor.Services
         string folderID = "default";
         public async Task<string> setUp()
         {
+
             Console.WriteLine("Setting up");
             credential ??= await GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {
                     ClientId = Constants.ClientID,
                     ClientSecret = Constants.ClientSecret
+                                       
                 },
                 new[] {
                     DriveService.Scope.Drive,
@@ -37,6 +42,7 @@ namespace Photo_Life_Blazor.Services
                     Oauth2Service.Scope.UserinfoProfile,
                     Oauth2Service.Scope.Openid
                 },
+
                 "user",
                 CancellationToken.None,
                 new FileDataStore("PhotoLife")) ;
@@ -45,6 +51,7 @@ namespace Photo_Life_Blazor.Services
                 HttpClientInitializer = credential,
                 ApplicationName = "PhotoLife"
             });
+
             if (username == null)
             {
                 Oauth2Service userInfoService = new Oauth2Service(new BaseClientService.Initializer
@@ -79,6 +86,7 @@ namespace Photo_Life_Blazor.Services
             var request = driveService.Files.List();
             var previousIds = await getStoredPhotos(username);
             request.Q = "mimeType contains 'image/' and trashed = false and '" + folderID + "' in parents";
+            request.PageSize = 1000;
             var fileList = await request.ExecuteAsync();
             
             foreach (var file in fileList.Files)
@@ -145,7 +153,7 @@ namespace Photo_Life_Blazor.Services
             return 1;
         }
         
-        public async Task<string> sendFilePathstoDB(List<string> Ids)
+        public async Task<string> sendFilePathstoDB(List<string> Ids, int FilesCreation)
         {
             Console.WriteLine("Sending to DB");
             string base_path  = System.IO.Directory.GetCurrentDirectory() + "\\Photos\\";
@@ -220,6 +228,7 @@ namespace Photo_Life_Blazor.Services
             }
             else
             {
+                Console.WriteLine("getStoredPhotos");
                 Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
                 return new List<string>();
             }
@@ -231,14 +240,48 @@ namespace Photo_Life_Blazor.Services
             var ids = await getFileIds();
             var memoryStreams = await downloadFiles(ids);
             var fileCreation = await writeStreamstoFile(memoryStreams, ids);
-            var folder = await createFolder("testing");
-            Console.WriteLine(await sendFilePathstoDB(ids));
-            await movePhotos(ids, folder);
+            //var folder = await createFolder("testing");
+            Console.WriteLine(await sendFilePathstoDB(ids, fileCreation));
+            //await movePhotos(ids, folder);
             //if (fileCreation == 1)
             //{
             //    deleteFiles(ids);
             //}
             return username;
+        }
+        public async Task<bool> albumGenerator(ResponseModel options)
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //Console.WriteLine(test);
+            //Console.WriteLine("{\"username\": \"" + username + "\"," +
+            //                                 "\"options\" : \"" + options + "\"}");
+            string options_string = Newtonsoft.Json.JsonConvert.SerializeObject(options);
+            //options_string = options_string.Replace("{", "");
+            //options_string = options_string.Replace("}", "");
+            var content = new StringContent(options_string, Encoding.UTF8,
+                                    "application/json");
+            var response = await client.PostAsync("https://localhost:7214/api/metadata/GetFilteredData", content);
+            Console.WriteLine(options_string);
+            if (response.IsSuccessStatusCode)
+            {
+                // Parse the response body.
+                var ids = await response.Content.ReadAsStringAsync();  //Make sure to add a reference to System.Net.Http.Formatting.dll
+                ids = ids.Replace("[", "");
+                ids = ids.Replace("\"", "");
+                ids = ids.Replace("]", "");
+                var list_ids = ids.Split(",").ToList();
+                Console.WriteLine("IDS:");
+                Console.WriteLine(ids);
+                string folderId = await createFolder("output");
+                await movePhotos(list_ids, folderId);
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                return false;
+            }
         }
     }
 }

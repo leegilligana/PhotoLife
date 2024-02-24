@@ -57,11 +57,10 @@
 
     private async void googleDrive()
     {
-        user = await GoogleServices.getUserPhotos();
+        user = await GoogleServices.setUp();
+        await GoogleServices.getUserPhotos();
         // user = "photolife@carleton.edu";
         // Remove the @ and domain from the user's email
-        string[] emailParts = user.Split('@');
-        user = emailParts[0];
         noSignIn = false;
     }
 

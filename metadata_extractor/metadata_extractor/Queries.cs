@@ -177,6 +177,7 @@ namespace DB_Queries
         public string[] LensModel(string lensModel)
         {
             var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND lens_model LIKE '%{lensModel}%';", conn);
+            cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 

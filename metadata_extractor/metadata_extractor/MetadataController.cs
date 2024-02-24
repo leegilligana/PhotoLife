@@ -25,7 +25,7 @@ namespace metadata_extractor.Controllers
             Type typeResponseModel = responseModel.GetType();
        
             foreach (PropertyDescriptor field in TypeDescriptor.GetProperties(typeResponseModel)) { 
-                if (field.GetValue(responseModel) != null && field.Name != "username")
+                if (field.GetValue(responseModel) != null && field.Name != "username" && field.GetValue(responseModel) != "null")
                 {
                     switch (field.Name)
                     {

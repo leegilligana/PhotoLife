@@ -1,7 +1,10 @@
 ﻿@page "/album/{user}"
+@using Photo_Life_Blazor.Services
 @inject NavigationManager NavigationManager
+@inject GoogleService googleService
 @using System.Collections.Generic
 @using metadata_extractor.Models
+@using Photo_Life_Blazor.Models
 
 <PageTitle>PhotoLife: Album Generator</PageTitle>
 
@@ -396,16 +399,6 @@
     private 
     ResponseModel responseModel = new ResponseModel();
 
-    public class FilterOption
-    {
-        public string Filter { get; set; }
-        public bool SelectedOption { get; set; }
-        public List<string> SelectedFilterString { get; set; }
-        public List<int> SelectedFilterInt { get; set; }
-        public List<double> SelectedFilterDouble { get; set; }
-        public List<DateTime> SelectedFilterDateTime { get; set; }
-
-    }
     static DateTime basic = new DateTime(2024, 01, 01, 00, 00, 00);
 
     private List<FilterOption> options = new List<FilterOption>
@@ -458,8 +451,8 @@
 
     /*new FilterOption
     {
-        Filter = "Software",
-        SelectedOption
+    Filter = "Software",
+    SelectedOption
     }*/
 
     private void AllFilter()
@@ -506,7 +499,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputLensModel = filter.SelectedFilterString.ToString();
+                    responseModel.inputLensModel = filter.SelectedFilterString[0].ToString();
                 }
             }
 
@@ -515,7 +508,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputOrientation = filter.SelectedFilterString.ToString();
+                    responseModel.inputOrientation = filter.SelectedFilterString[0].ToString();
                 }
             }
 
@@ -551,7 +544,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputSceneType = filter.SelectedFilterString.ToString();
+                    responseModel.inputSceneType = filter.SelectedFilterString[0].ToString();
                 }
             }
             // For Exposure Mode
@@ -559,7 +552,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputExposureMode = filter.SelectedFilterString.ToString();
+                    responseModel.inputExposureMode = filter.SelectedFilterString[0].ToString();
                 }
             }
             // For Lens Model
@@ -567,7 +560,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputLensModel = filter.SelectedFilterString.ToString();
+                    responseModel.inputLensModel = filter.SelectedFilterString[0].ToString();
                 }
             }
             // For File Type
@@ -575,7 +568,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputFileType = filter.SelectedFilterString.ToString();
+                    responseModel.inputFileType = filter.SelectedFilterString[0].ToString();
                 }
             }
             // For File Name
@@ -583,7 +576,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputFileName = filter.SelectedFilterString.ToString();
+                    responseModel.inputFileName = filter.SelectedFilterString[0].ToString();
                 }
             }
             // For File Size
@@ -655,7 +648,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    responseModel.inputSoftware = filter.SelectedFilterString.ToString();
+                    responseModel.inputSoftware = filter.SelectedFilterString[0].ToString();
                 }
             }
         }
@@ -670,6 +663,9 @@
             noOptionChosen = true;
         } else
         {
+            AllFilter();
+            responseModel.username = user;
+            await googleService.albumGenerator(responseModel);
             // Turn Loading Screen On
             noOptionChosen = false;
             isLoading = true;
