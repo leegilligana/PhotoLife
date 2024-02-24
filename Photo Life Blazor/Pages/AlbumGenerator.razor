@@ -1,4 +1,4 @@
-﻿@page "/album/{user}"
+@page "/album/{user}"
 @using Photo_Life_Blazor.Services
 @inject NavigationManager NavigationManager
 @inject GoogleService googleService
@@ -214,8 +214,10 @@
 					                <label><h6>File Type:</h6></label>
                                     <select @bind="options[11].SelectedFilterString[0]">
                                         <option value="JPG">.JPG</option>
+                                        <option value="JPEG">.JPEG</option>
                                         <option value="HEIC">.HEIC</option>
                                         <option value="PNG">.PNG</option>
+                                        <option value="HEIF">.HEIF</option>
                                     </select>
 				                </div>
 			                }
@@ -356,11 +358,6 @@
             </div>
     </div>
 
-    @* Submit Button to Send Data to API *@
-    @* <div class="p-lg-4">
-        <button class="btn btn-default btn-main" @onclick="Success"><h4>Generate</h4></button>
-    </div> *@
-
     <div style="">
         @* Error if no options chosen *@
         @if (noOptionChosen == true)
@@ -398,7 +395,17 @@
     @* List Data for the API *@
     private 
     ResponseModel responseModel = new ResponseModel();
+    public class FilterOption
+    {
+        public string Filter { get; set; }
+        public bool SelectedOption { get; set; }
+        public List<string> SelectedFilterString { get; set; }
+        public List<int> SelectedFilterInt { get; set; }
+        public List<double> SelectedFilterDouble { get; set; }
+        public List<float> SelectedFilterFloat { get; set; }
+        public List<DateTime> SelectedFilterDateTime { get; set; }
 
+    }
     static DateTime basic = new DateTime(2024, 01, 01, 00, 00, 00);
 
     private List<FilterOption> options = new List<FilterOption>
@@ -408,7 +415,7 @@
         new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilterDateTime = new List<DateTime> {basic, basic} }, //real datetime insert so it is formatted?
         new FilterOption { Filter = "Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
         new FilterOption { Filter = "Orientation", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } },
-        new FilterOption { Filter = "Exposure Time", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
+        new FilterOption { Filter = "Exposure Time", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0 } },
         new FilterOption { Filter = "Shutter Speed Value", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "Brightness Value", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "Scene Type", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } }, //redundant to orientation?!
@@ -416,7 +423,7 @@
         new FilterOption { Filter = "Lens Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
         new FilterOption { Filter = "File Type", SelectedOption = false, SelectedFilterString = new List<string> { "JPEG" } },
         new FilterOption { Filter = "File Name", SelectedOption = false, SelectedFilterString = new List<string> { "IMG_0001" } },
-        new FilterOption { Filter = "File Size", SelectedOption = false, SelectedFilterDouble = new List<double> { 0, 0 } },
+        new FilterOption { Filter = "File Size", SelectedOption = false, SelectedFilterFloat = new List<float> { 0 } },
         new FilterOption { Filter = "GPS Altitude", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "GPS Img Direction", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "GPS Horizontal Positioning Error", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
@@ -449,13 +456,7 @@
         }
     }
 
-    /*new FilterOption
-    {
-    Filter = "Software",
-    SelectedOption
-    }*/
-
-    private void AllFilter()
+    private void AllFilters()
     {
         foreach (var filter in options)
         {
@@ -517,7 +518,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputExposureTime = filter.SelectedFilterDouble.ToList();
+                    responseModel.inputExposureTime = filter.SelectedFilterDouble[0];
 
                 }
             }
@@ -527,7 +528,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputShutterSpeedValue = filter.SelectedFilterDouble.ToArray();
+                    responseModel.inputShutterSpeedValue = filter.SelectedFilterDouble[0];
                 }
             }
 
@@ -536,7 +537,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputBrightnessValue = filter.SelectedFilterDouble.ToArray();
+                    responseModel.inputBrightnessValue = filter.SelectedFilterDouble[0];
                 }
             }
             // For Scene Type
@@ -584,7 +585,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputFileSize = filter.SelectedFilterDouble.ToArray();
+                    responseModel.inputFileSize = filter.SelectedFilterFloat[0];
                 }
             }
             // For GPS Altitude
@@ -592,7 +593,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputGPSAltitude = filter.SelectedFilterDouble.ToArray();
+                    responseModel.inputGPSAltitude = filter.SelectedFilterDouble[0];
                 }
             }
             // For GPS Img Direction
@@ -600,7 +601,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputGPSImgDirection = filter.SelectedFilterDouble.ToArray();
+                    responseModel.inputGPSImgDirection = filter.SelectedFilterDouble[0];
                 }
             }
             // For GPS Horizontal Positioning Error
@@ -608,7 +609,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputGPSHorizontalPositioningError = filter.SelectedFilterDouble.ToArray();
+                    responseModel.inputGPSHorizontalPositioningError = filter.SelectedFilterDouble[0];
                 }
             }
             // For Width
@@ -616,7 +617,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputWidth = filter.SelectedFilterInt.ToArray();
+                    responseModel.inputWidth = filter.SelectedFilterInt[0];
                 }
             }
             // For Height
@@ -624,7 +625,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputHeight = filter.SelectedFilterInt.ToArray();
+                    responseModel.inputHeight = filter.SelectedFilterInt[0];
                 }
             }
             // For X Resolution
@@ -632,7 +633,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputXRes = filter.SelectedFilterInt.ToArray();
+                    responseModel.inputXRes = filter.SelectedFilterInt[0];
                 }
             }
             // For Y Resolution
@@ -640,7 +641,7 @@
             {
                 if (filter.SelectedOption)
                 {
-                    //responseModel.inputYRes = filter.SelectedFilterInt.ToArray();
+                    responseModel.inputYRes = filter.SelectedFilterInt[0];
                 }
             }
             // For Software
@@ -663,22 +664,15 @@
             noOptionChosen = true;
         } else
         {
-            AllFilter();
+            AllFilters(); // assign all user input to the response model
             responseModel.username = user;
-            await googleService.albumGenerator(responseModel);
-            // Turn Loading Screen On
             noOptionChosen = false;
-            isLoading = true;
+            isLoading = true; // turn on loading screen
             StateHasChanged();
-            await Task.Delay(5555);
-
-            // Call the Album Generator API with list and wait for respone.
-            // await curl -X POST https://localhost:7214/api/controller/GetFilteredData -d '{"username": {user}, "connString": {options} }' -H "content-type: application/json";
-
-            // Turn Loading Screen Off and notify user to check their drive
-            isLoading = false;
+            await googleService.albumGenerator(responseModel);
+            isLoading = false; // turn off
             StateHasChanged();
-            Done = true;
+            Done = true; // notify user of job complete
         }
     }
 }

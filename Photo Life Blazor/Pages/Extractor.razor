@@ -7,19 +7,34 @@
 
 <div class="text-center my-2">
     <div class="sliding">
+        @* Loading PopUp for when the photos are downloading from the PhotoLife folder *@
+        @if (isLoading)
+        {
+            <div class="modal">
+                <div class="modal-content">
+                    <div class="spinner"></div>
+                    <p>Setting up & extracting photo metadata *grab a snack*...</p>
+                </div>
+            </div>
+        }
         <div class="p-2 slide">
             <h1>Step 1: Metadata Extractor</h1>
             <h5>
-                To start, please navigate to your Google Drive and create/update a folder labeled 'PhotoLife' where all the desired
+                To start, please navigate to your Google Drive and create/update a folder labeled <b>'PhotoLife'</b> where all the desired
                 photos you wish to upload can be placed. We kindly request that you include a minimum of 5 photos in this folder. 
                 Afterwards, proceed to sign into your Google Drive using the button provided below to grant our program access to 
-                the photos stored within said folder.<br />
+                the photos stored within said folder. When prompted, please check the box that gives us access to your Google Drive files 
+                (don't worry, we'll only be downloading the metadata from your PhotoLife folder).<br />
                 Acceptable file types: {.png, .jpg, .heic}
-
             </h5>
             <div class="align-content-center justify-content-center">
                 <button class="btn btn-main" @onclick="googleDrive" style="font-size: 22px;"><h4>Sign Into Google</h4></button>
             </div>
+            @if (failedLogIn == true)
+            {
+                <p><i>There was an issue with logging you in. Please check that you have a PhotoLife folder with pictures in it and that 
+                    you've given our app permissions to extract data from your Google Drive.</i></p>
+            }
         </div>
         <div class="p-2 slide delay">
             <h1>Step 2: Analyzing The Data</h1>
@@ -54,28 +69,31 @@
 @code {
     private string user = "";
     private bool noSignIn = false; // keeps track of if the user is signed in or not
+    private bool isLoading = false; // loading screen
+    private bool failedLogIn = false;
+    private string uploadStatus = "NULL";
 
     private async void googleDrive()
     {
-        user = await GoogleServices.setUp();
-        await GoogleServices.getUserPhotos();
-        // user = "photolife@carleton.edu";
-        // Remove the @ and domain from the user's email
-        noSignIn = false;
-    }
-
-    private bool userSignedIn()
-    {
-        if (user != "") {
-            return true;
-        } else {
-            return false;
+        isLoading = true; // loading screen while the photos download
+        StateHasChanged();
+        user = await GoogleServices.setUp(); // get username and open Sign-In Page
+        uploadStatus = await GoogleServices.getUserPhotos(); // grab photos from PhotoLife file
+        if (uploadStatus == "false")
+        {
+            noSignIn = true;
+            failedLogIn = true;
+        } else
+        {
+            noSignIn = false;
         }
+        isLoading = false;
+        StateHasChanged();
     }
 
     private void NavigateToAlbum()
     {
-        if (userSignedIn())
+        if (user != "")
         {
             noSignIn = false;
             NavigationManager.NavigateTo($"/album/{user}");
@@ -86,7 +104,7 @@
 
     private void NavigateToProfile()
     {
-        if (userSignedIn())
+        if (user != "")
         {
             noSignIn = false;
             NavigationManager.NavigateTo($"/profile/{user}");
