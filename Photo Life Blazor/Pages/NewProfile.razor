@@ -1,4 +1,4 @@
-﻿@using System.Collections.Generic
+@using System.Collections.Generic
 
 <PageTitle>PhotoLife: New Profile</PageTitle>
 
@@ -78,26 +78,32 @@
             {
                 TimeOfDayHeader = true;
                 //TimeOfDay = ProfileData.AveTime;
+                TimeOfDay = "18:32:48";
             }
             else if (preset == "Week Day")
             {
                 WeekDayHeader = true;
                 //WeekDay = ProfileData.Weekday;
+                WeekDay = "FRIDAY";
+
             }
             else if (preset == "GPS")
             {
                 GPSHeader = true;
                 //GPS = ProfileData.GpsCords;
+                GPS = "44.460792' -93.151405'";
             }
             else if (preset == "Camera Model")
             {
                 CameraModelHeader = true;
                 //CameraModel = ProfileData.CameraModel;
+                CameraModel = "iPhone 13";
             }
             else if (preset == "Brightness")
             {
                 BrightnessHeader = true;
                 //Brightness = ProfileData.AveBrightness;
+                Brightness = "8.8392";
             }
             /*else if ()
             {
