@@ -53,64 +53,63 @@
 </div>
 
 @code {
-    [Parameter]
-    public List<string> Headers { get; set; }
-    // public string ProfileData { get; set; }
+    [Parameter] public List<string> Headers { get; set; }
+    [Parameter] public object ProfileData { get; set; }
 
-    private Boolean TimeOfDayHeader = false, 
-                    WeekDayHeader = false, 
-                    GPSHeader = false, 
-                    CameraModelHeader = false, 
-                    BrightnessHeader = false;
-    private string TimeOfDay = "", 
-                    WeekDay = "", 
-                    GPS = "", 
+    private Boolean TimeOfDayHeader = false,
+                    WeekDayHeader = false,
+                    GPSHeader = false,
+                    CameraModelHeader = false,
+                    BrightnessHeader = false,
+                    PhotoFrequencyHeader = false;
+    private string TimeOfDay = "",
+                    WeekDay = "",
+                    GPS = "",
                     CameraModel = "",
-                    Brightness = "";
-
-    private List<string> presetHeaders = new List<string>();
-    private List<string> presetProfileData = new List<string>();
+                    Brightness = "",
+                    PhotoFrequency = "";
 
     // set the headers that were chosen from the presets
-    private void SetHeaders()
+    private void SetProfileData()
     {
-        presetHeaders = Headers;
-        foreach (string preset in presetHeaders)
+        foreach (string preset in Headers)
         {
             if (preset == "Time Of Day")
             {
                 TimeOfDayHeader = true;
+                //TimeOfDay = ProfileData.AveTime;
             }
             else if (preset == "Week Day")
             {
                 WeekDayHeader = true;
+                //WeekDay = ProfileData.Weekday;
             }
             else if (preset == "GPS")
             {
                 GPSHeader = true;
+                //GPS = ProfileData.GpsCords;
             }
             else if (preset == "Camera Model")
             {
                 CameraModelHeader = true;
+                //CameraModel = ProfileData.CameraModel;
             }
+            else if (preset == "Brightness")
+            {
+                BrightnessHeader = true;
+                //Brightness = ProfileData.AveBrightness;
+            }
+            /*else if ()
+            {
+                PhotoFrequencyHeader = true;
+                PhotoFrequency = ProfileData.PhotoTakingFreq();
+            }*/
         }
-    }
-
-    // set the data from the profile algorithm
-    private void SetProfileData()
-    {
-        // REPLACE WITH DATA FROM API
-        TimeOfDay = "MORNING"; 
-        WeekDay = "TUESDAY";
-        GPS = "NORTHFIELD, MN";
-        CameraModel = "IPHONE 11 PRO";
-        Brightness = "HIGH";
     }
 
     // Setup all the headers and data
     protected override void OnInitialized()
     {
-        SetHeaders();
         SetProfileData();
     }
 }
