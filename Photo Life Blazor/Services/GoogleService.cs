@@ -234,7 +234,6 @@ namespace Photo_Life_Blazor.Services
             var memoryStreams = await downloadFiles(ids);
             var fileCreation = await writeStreamstoFile(memoryStreams, ids);
             var result  = await sendFilePathstoDB(ids, fileCreation);
-            
             return result;
         }
         public async Task<bool> albumGenerator(ResponseModel options)
@@ -260,7 +259,7 @@ namespace Photo_Life_Blazor.Services
                 if (ids.Length > 0)
                 {
                     string dateTime = DateTime.Now.ToString();
-                    string folderId = await createFolder("output-"+dateTime);
+                    string folderId = await createFolder("PhotoLife output-"+dateTime);
                     result = await movePhotos(list_ids, folderId);
                 }
                 return result;
