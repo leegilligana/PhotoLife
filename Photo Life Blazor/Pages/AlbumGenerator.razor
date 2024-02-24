@@ -237,19 +237,6 @@
 		                </div>
             </div>
             <div style="margin: .6em 0">
-		                <label><h4>File Size?</h4></label>
-		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(13)">@GetButtonText(13)</button>
-		                <div>
-			                @if (options[13].SelectedOption)
-			                {
-				                <div>
-					                <label><h6>File Size:</h6></label>
-					                <input @bind="options[13].SelectedFilterDouble[0]" />
-				                </div>
-			                }
-		                </div>
-            </div>
-            <div style="margin: .6em 0">
 		                <label><h4>GPS Altitude?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(14)">@GetButtonText(14)</button>
 		                <div>
@@ -368,13 +355,24 @@
         @* Success Messsage that shows after albums have been created *@
         @if (Done == true)
         {
-            <div class="p-lg-4">
-                <p>
-                    <b>Success!</b> We have processed your photos with your @numOfFilters chosen filter(s). <br />
-                    Please check your Drive for the new Album(s). <br />
-                    If there are no albums, then that means we couldn't find photos with the filter(s) you selected.
-                </p>
-            </div>
+            @if (albumSuccess)
+            {
+                <div class="p-lg-4">
+                    <p>
+                        <b>Success!</b> We have processed your photos with your @numOfFilters chosen filter(s). <br />
+                        Please check your Drive for the new Album(s). <br />
+                        If there are no albums, then that means we couldn't find photos with the filter(s) you selected.
+                    </p>
+                </div>
+            } else
+            {
+                <div class="p-lg-4">
+                    <p>
+                        <b>No New Albums Added:</b> We could not find any photos matching your @numOfFilters chosen filter(s). <br />
+                        Please try again with a different filter.<br />
+                    </p>
+                </div>
+            }
         } else {
             @* Submit Button to Send Data to API *@
             <div class="p-lg-4">
@@ -387,14 +385,15 @@
 @code {
     [Parameter] public string user { get; set; }
 
-    private Boolean noOptionChosen = false; // tracks whether any options have been chosen
-    private Boolean Done = false; // determines if the albums have been generated
+    private bool noOptionChosen = false; // tracks whether any options have been chosen
+    private bool Done = false; // determines if the albums have been generated (sent to google service)
+    private bool albumSuccess = false; // determines whether any albums could be filtered
     private int numOfFilters = 0; // counts filters chosen
     private bool isLoading = false; // loading screen
+    private bool albumStatus = false; //can albums be generated with filters? false if no, true if yes
 
     @* List Data for the API *@
-    private 
-    ResponseModel responseModel = new ResponseModel();
+    private ResponseModel responseModel = new ResponseModel();
     public class FilterOption
     {
         public string Filter { get; set; }
@@ -404,26 +403,25 @@
         public List<double> SelectedFilterDouble { get; set; }
         public List<float> SelectedFilterFloat { get; set; }
         public List<DateTime> SelectedFilterDateTime { get; set; }
-
     }
     static DateTime basic = new DateTime(2024, 01, 01, 00, 00, 00);
 
     private List<FilterOption> options = new List<FilterOption>
     {
         new FilterOption { Filter = "Flash", SelectedOption = false, SelectedFilterString = new List<string> { "ON" } },
-        new FilterOption { Filter = "Location", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0, 0.0 } }, //distance in what? ft, in?
-        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilterDateTime = new List<DateTime> {basic, basic} }, //real datetime insert so it is formatted?
+        new FilterOption { Filter = "Location", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0, 0.0 } }, // distance in what? ft, in?
+        new FilterOption { Filter = "Time Of Day", SelectedOption = false, SelectedFilterDateTime = new List<DateTime> {basic, basic} }, // real datetime insert so it is formatted?
         new FilterOption { Filter = "Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
         new FilterOption { Filter = "Orientation", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } },
         new FilterOption { Filter = "Exposure Time", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0 } },
         new FilterOption { Filter = "Shutter Speed Value", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "Brightness Value", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
-        new FilterOption { Filter = "Scene Type", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } }, //redundant to orientation?!
+        new FilterOption { Filter = "Scene Type", SelectedOption = false, SelectedFilterString = new List<string> { "Portrait" } }, // NOT BEING USED ANYMORE?
         new FilterOption { Filter = "Exposure Mode", SelectedOption = false, SelectedFilterString = new List<string> { "Auto" } },
         new FilterOption { Filter = "Lens Model", SelectedOption = false, SelectedFilterString = new List<string> { "iPhone 11" } },
         new FilterOption { Filter = "File Type", SelectedOption = false, SelectedFilterString = new List<string> { "JPEG" } },
         new FilterOption { Filter = "File Name", SelectedOption = false, SelectedFilterString = new List<string> { "IMG_0001" } },
-        new FilterOption { Filter = "File Size", SelectedOption = false, SelectedFilterFloat = new List<float> { 0 } },
+        new FilterOption { Filter = "File Size", SelectedOption = false, SelectedFilterFloat = new List<float> { 0 } }, // NOT BEING USED ANYMORE
         new FilterOption { Filter = "GPS Altitude", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "GPS Img Direction", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
         new FilterOption { Filter = "GPS Horizontal Positioning Error", SelectedOption = false, SelectedFilterDouble = new List<double> { 0.0, 0.0 } },
@@ -669,10 +667,17 @@
             noOptionChosen = false;
             isLoading = true; // turn on loading screen
             StateHasChanged();
-            await googleService.albumGenerator(responseModel);
+            albumStatus = await googleService.albumGenerator(responseModel);
             isLoading = false; // turn off
             StateHasChanged();
             Done = true; // notify user of job complete
+            if (!albumStatus)
+            {
+                albumSuccess = false; // no albums generated
+            } else
+            {
+                albumSuccess = true; // albums generated and in drive
+            }
         }
     }
 }

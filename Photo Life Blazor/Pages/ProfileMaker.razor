@@ -64,7 +64,9 @@
         new PresetOption { Name = "Time Of Day", isChecked = false },
         new PresetOption { Name = "GPS", isChecked = false },
         new PresetOption { Name = "Camera Model", isChecked = false },
-        new PresetOption { Name = "Week Day", isChecked = false }
+        new PresetOption { Name = "Week Day", isChecked = false },
+        new PresetOption { Name = "Brightness", isChecked = false },
+        new PresetOption { Name = "Photo Taken Frequency", isChecked = false }
     };
 
     private List<PresetOption> selectedPresets = new List<PresetOption>();
@@ -110,6 +112,5 @@
         isLoading = false;
         StateHasChanged();
         newProfileGenerated = true;
-        //NavigationManager.NavigateTo($"/profile_results/{user}/{Uri.EscapeDataString(string.Join('-', onlyPresetNames))}");
     }
 }
