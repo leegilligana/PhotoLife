@@ -28,8 +28,8 @@
 
     @* Filter Buttons & Corresponding Filter Options *@
     @* LEFT SIDE FRAME *@
-    <div style="display: flex; margin: 0 11em;">
-        <div style="flex: 1; text-align: left;">
+    <div style="display: flex; margin: 0;">
+        <div style="flex: 1; text-align: right;">
             <div style="margin: .6em 0">
                 <label><h4>Flash?</h4></label>
                 <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(0)">@GetButtonText(0)</button>
@@ -203,7 +203,7 @@
         </div>
 
     @* RIGHT SIDE FRAME *@
-        <div style="flex: 1; text-align: left;">
+        <div style="flex: 1; text-align: right;">
             <div style="margin: .6em 0">
 		                <label><h4>File Type?</h4></label>
 		                <button class="btn btn-default btn-main" @onclick="()=>ToggleOption(11)">@GetButtonText(11)</button>
