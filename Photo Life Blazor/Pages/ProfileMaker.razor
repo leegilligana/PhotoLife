@@ -103,7 +103,7 @@
     {        
         isLoading = true; // turn loading screen on
         StateHasChanged();
-        profileData = await ProfileMakerService.CreateProfile(onlyPresetNames);
+        // profileData = await ProfileMakerService.CreateProfile(onlyPresetNames);
         isLoading = false;
         StateHasChanged();
         newProfileGenerated = true; // send data to new profile template
