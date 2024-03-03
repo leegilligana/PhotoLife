@@ -16,6 +16,7 @@ using System.Linq.Expressions;
 using System.IO;
 using Google.Apis.Json;
 using metadata_extractor.Models;
+using Microsoft.AspNetCore.Mvc.Formatters;
 
 namespace Photo_Life_Blazor.Services
 {
@@ -42,10 +43,10 @@ namespace Photo_Life_Blazor.Services
                     Oauth2Service.Scope.UserinfoProfile,
                     Oauth2Service.Scope.Openid
                 },
-
                 "user",
                 CancellationToken.None,
                 new FileDataStore("PhotoLife"));
+            await credential.RefreshTokenAsync(CancellationToken.None);
             driveService ??= new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
