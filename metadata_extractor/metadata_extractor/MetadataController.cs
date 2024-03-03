@@ -8,6 +8,8 @@ using MetadataExtractor.Util;
 using static System.Collections.Specialized.BitVector32;
 using System.ComponentModel;
 using metadata_extractor;
+using ProfileMaker;
+using Profiles;
 
 namespace metadata_extractor.Controllers
 {
@@ -112,6 +114,21 @@ namespace metadata_extractor.Controllers
         {
             Queries queries = new Queries(Constants.connString, responseModel.username);
             return queries.getAll();
+        }
+
+        [HttpPost("[action]")]
+        public void DeleteAll([FromBody] ResponseModel responseModel)
+        {
+            Queries queries = new Queries(Constants.connString, responseModel.username);
+            queries.DeleteAll();
+        }
+
+        [HttpPost("[action]")]
+        public Profile MakeProfile([FromBody] Filters filterList)
+        {
+            var profileMaker = new MakeProfile();
+            Profile newProfile = profileMaker.CreateProfile(filterList.filters.ToList());
+            return newProfile;
         }
 
         [HttpPost("[action]")]
