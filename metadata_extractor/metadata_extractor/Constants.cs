@@ -36,7 +36,7 @@ namespace metadata_extractor
 "Date_Time", "Media_White_Point", "Red_Colorant", "Green_Colorant", "Blue_Colorant", "Scene_Type",
 "Exposure_Mode", "Lens_Model", "Exif_Version", "Detected_File_Type_Name", "File_Name", "Flash","GPS_Coordinates"};
 
-        public static string[] removeUnits = { "Image_Width", "Image_Height", "X_Resolution", "Y_Resolution", "Exposure_Time", "Shutter_Speed_Value", "GPS_Altitude",
+        public static string[] removeUnits = { "X_Resolution", "Y_Resolution", "Exposure_Time", "Shutter_Speed_Value", "GPS_Altitude",
     "GPS_Img_Direction", "GPS_Horizontal_Positioning_Error", "File_Size"};
         public static string[] pointToArrayFields = { "Media_White_Point", "Red_Colorant", "Green_Colorant", "Blue_Colorant" };
         public static string[] doubles = { "Brightness_Value", "GPS_Img_Direction", "GPS_Altitude", "GPS_Horizontal_Positioning_Error", "Exposure_Time" };

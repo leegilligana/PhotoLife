@@ -27,7 +27,7 @@ namespace metadata_extractor.Controllers
             Type typeResponseModel = responseModel.GetType();
        
             foreach (PropertyDescriptor field in TypeDescriptor.GetProperties(typeResponseModel)) { 
-                if (field.GetValue(responseModel) != null && field.Name != "username")
+                if (field.GetValue(responseModel) != null && field.Name != "username" && field.GetValue(responseModel) != "null")
                 {
                     switch (field.Name)
                     {
@@ -105,7 +105,6 @@ namespace metadata_extractor.Controllers
             }
             
             String[] finalFilteredResult = queries.finalResult(listOfFilteredPhotos);
-            queries.CloseConnection();
             return finalFilteredResult;
         }
 
@@ -134,7 +133,6 @@ namespace metadata_extractor.Controllers
         [HttpPost("[action]")]
         public bool InsertToDB([FromBody] Paths pathList) 
         {
-            int count = 0;
             try
             {
                 DataInsert inserter = new DataInsert(Constants.connString);
@@ -142,12 +140,10 @@ namespace metadata_extractor.Controllers
                 {
                     inserter.InsertData((string)path, (string)pathList.owner);
                 }
-                inserter.CloseConn();
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 return false;
             }
         }

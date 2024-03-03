@@ -52,6 +52,7 @@
     private bool isLoading = false; // loading screen
     private List<string> onlyPresetNames = new List<string>(); // preset headers for the profile stats
     private bool newProfileGenerated = false; // switches from profile maker to profile stats
+    public object profileData; // collects profile data from ProfileMaker
 
     public class PresetOption
     {
@@ -64,7 +65,8 @@
         new PresetOption { Name = "Time Of Day", isChecked = false },
         new PresetOption { Name = "GPS", isChecked = false },
         new PresetOption { Name = "Camera Model", isChecked = false },
-        new PresetOption { Name = "Week Day", isChecked = false }
+        new PresetOption { Name = "Week Day", isChecked = false },
+        new PresetOption { Name = "Brightness", isChecked = false }
     };
 
     private List<PresetOption> selectedPresets = new List<PresetOption>();
@@ -97,19 +99,11 @@
     // start loading screen, ask for data, and send to the new profile component
     async private Task SetUpNewProfile()
     {        
-        isLoading = true;
+        isLoading = true; // turn loading screen on
         StateHasChanged();
-        await Task.Delay(5555);
-
-        // Call the Profile Maker API and wait for respone.
-        //await ProfileMaker.Sum("");
-        //send data to next page or call api in the new profile? OR keep everything on this page??????????????????????????????????????????
-        //await curl - X POST https://localhost:7214/api/.... -d '{"username": {user}, "connString": {selectedPresets} }' - H "content-type: application/json";
-
-
+        // profileData = await ProfileMakerService.CreateProfile(onlyPresetNames);
         isLoading = false;
         StateHasChanged();
-        newProfileGenerated = true;
-        //NavigationManager.NavigateTo($"/profile_results/{user}/{Uri.EscapeDataString(string.Join('-', onlyPresetNames))}");
+        newProfileGenerated = true; // send data to new profile template
     }
 }

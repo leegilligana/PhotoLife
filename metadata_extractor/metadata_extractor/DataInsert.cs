@@ -73,10 +73,6 @@ namespace metadata_extractor
                 cmd.Parameters.AddWithValue("owner", owner);
                 cmd.ExecuteNonQuery();
             };
-        }
-
-        public void CloseConn()
-        {
             conn.Close();
         }
 
@@ -86,7 +82,7 @@ namespace metadata_extractor
             ImageMetadataReader.ReadMetadata(path);
                     Dictionary<string, string> dataDict = new Dictionary<string, string>();
                     DataCleaner dataCleaner = new DataCleaner();
-                    //DataInsert dataInsert = new DataInsert(Constants.connString);
+                    DataInsert dataInsert = new DataInsert(Constants.connString);
                     int count = 0;
                     string owner = user;
 
@@ -111,15 +107,17 @@ namespace metadata_extractor
                                 }
                     }
 
+                    File.Delete(path);
+
+
                     dataCleaner.formatData(dataDict, Constants.removeUnits, Constants.pointToArrayFields, Constants.doubles);
-            //foreach (KeyValuePair<string, string> author in dataDict)
-            //{
-            //    Console.WriteLine("Key: {0}, Value: {1}",
-            //        author.Key, author.Value);
-            //}
-            insertDataHelper(dataDict, Constants.quoteType, Constants.noQuoteType, owner);
-                    
-        }
+                    foreach (KeyValuePair<string, string> author in dataDict)
+                    {
+                        Console.WriteLine("Key: {0}, Value: {1}",
+                            author.Key, author.Value);
+                    }
+                    dataInsert.insertDataHelper(dataDict, Constants.quoteType, Constants.noQuoteType, owner);
+                }
 	        }
         }
 
