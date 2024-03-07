@@ -156,8 +156,7 @@ namespace ProfileMaker
         public Profile CreateProfile(string username)
         {
             Profile userProfile = new Profile();
-            var connString = "Host=cs400f23acd.mathcs.carleton.edu;Username=photolife;" +
-            "Password=BlueWTRgrass23&;Database=photolife";
+            var connString = Constants.connString;
             PFQueries q = new PFQueries(connString, username);
             List<string> all_filters = new List<string>()
             {
