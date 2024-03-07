@@ -293,5 +293,27 @@ namespace Photo_Life_Blazor.Services
                 return new List<string>();
             }
         }
+        
+        public async Task<string> deleteAll()
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var content = new StringContent("{\"username\": \"" + username + "\"}", Encoding.UTF8,
+                                    "application/json");
+            var response = await client.PostAsync("https://localhost:7214/api/metadata/DeleteAll", content);
+            if (response.IsSuccessStatusCode)
+            {
+                // Parse the response body.
+                var results = await response.Content.ReadAsStringAsync();  //Make sure to add a reference to System.Net.Http.Formatting.dll
+                Console.WriteLine("deleted");
+                return results;
+            }
+            else
+            {
+                Console.WriteLine("getStoredPhotos");
+                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                return "Error";
+            }
+        }
     }
 }
