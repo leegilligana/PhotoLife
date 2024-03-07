@@ -95,8 +95,13 @@ namespace metadata_extractor
             int i = 0;
             while (reader.Read())
             {
-                dates.Add(reader.GetDateTime("date_time"));
-                i++;
+                Console.WriteLine("A");
+                if (!reader.IsDBNull("date_time"))
+                {
+                    Console.WriteLine("B");
+                    dates.Add(reader.GetDateTime("date_time"));
+                    i++;
+                }
             }
             reader.Close();
             return dates;
@@ -241,10 +246,20 @@ namespace metadata_extractor
             var cmd = new NpgsqlCommand("SELECT AVG(CAST(brightness_value AS decimal)) FROM photolife WHERE owner = @owner;", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             var reader = cmd.ExecuteReader();
-            string bright_value = reader.GetString(0);
-
-            reader.Close();
-            return bright_value;
+            if (reader.HasRows)
+            {
+                Console.WriteLine("1");
+                reader.Read();
+                if (reader.IsDBNull(0))
+                {
+                    Console.WriteLine("2");
+                    string bright_value = reader.GetString(0);
+                    reader.Close();
+                    return bright_value;
+                }
+            }
+            Console.WriteLine("3");
+            return "";
         }
 
         public string[] SceneType(string sceneType)

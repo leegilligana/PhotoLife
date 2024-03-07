@@ -4,4 +4,4 @@
     {
         public string[]? filters  { get; set; }
     }
-}
+}   

@@ -1,5 +1,7 @@
 ﻿@page "/profile/{user}"
+@using Photo_Life_Blazor.Services
 @inject NavigationManager NavigationManager
+@inject GoogleService GoogleServices
 @using System.Collections.Generic
 @using System.Text.Json
 
@@ -96,6 +98,11 @@
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await GoogleServices.profileMaker();
+    }
+
     // start loading screen, ask for data, and send to the new profile component
     async private Task SetUpNewProfile()
     {        
@@ -107,3 +114,4 @@
         newProfileGenerated = true; // send data to new profile template
     }
 }
+    

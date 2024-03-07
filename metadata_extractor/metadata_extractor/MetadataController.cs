@@ -123,10 +123,10 @@ namespace metadata_extractor.Controllers
         }
 
         [HttpPost("[action]")]
-        public Profile MakeProfile([FromBody] Filters filterList)
+        public Profile MakeProfile([FromBody] ResponseModel responseModel)
         {
             var profileMaker = new MakeProfile();
-            Profile newProfile = profileMaker.CreateProfile(filterList.filters.ToList());
+            Profile newProfile = profileMaker.CreateProfile(responseModel.username);
             return newProfile;
         }
 

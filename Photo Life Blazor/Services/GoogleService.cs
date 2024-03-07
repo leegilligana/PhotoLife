@@ -46,7 +46,7 @@ namespace Photo_Life_Blazor.Services
                 "user",
                 CancellationToken.None,
                 new FileDataStore("PhotoLife"));
-            await credential.RefreshTokenAsync(CancellationToken.None);
+            
             driveService ??= new DriveService(new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
@@ -242,7 +242,7 @@ namespace Photo_Life_Blazor.Services
             bool result = false;
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            string options_string = Newtonsoft.Json.JsonConvert.SerializeObject(options);
+            string options_string = JsonConvert.SerializeObject(options);
             var content = new StringContent(options_string, Encoding.UTF8,
                                     "application/json");
             var response = await client.PostAsync("https://localhost:7214/api/metadata/GetFilteredData", content);
@@ -269,6 +269,31 @@ namespace Photo_Life_Blazor.Services
             {
                 Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
                 return false;
+            }
+        }
+        public async Task<List<string>> profileMaker()
+        {
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var content = new StringContent("{\"username\": \"" + username + "\"}", Encoding.UTF8,
+                                    "application/json");
+            var response = await client.PostAsync("https://localhost:7214/api/metadata/MakeProfile", content);
+            if (response.IsSuccessStatusCode)
+            {
+                // Parse the response body.
+                var results = await response.Content.ReadAsStringAsync();  //Make sure to add a reference to System.Net.Http.Formatting.dll
+                results = results.Replace("[", "");
+                results = results.Replace("\"", "");
+                results = results.Replace("]", "");
+                var list_results = results.Split(",").ToList();
+                Console.WriteLine(results);
+                return list_results;
+            }
+            else
+            {
+                Console.WriteLine("getStoredPhotos");
+                Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
+                return new List<string>();
             }
         }
     }

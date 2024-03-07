@@ -153,14 +153,18 @@ namespace ProfileMaker
          * Returns a Profile object, which contains variables representing user-selected 
          * information to grab from their photos
          */
-        public Profile CreateProfile(List<string> filters)
+        public Profile CreateProfile(string username)
         {
             Profile userProfile = new Profile();
             var connString = "Host=cs400f23acd.mathcs.carleton.edu;Username=photolife;" +
             "Password=BlueWTRgrass23&;Database=photolife";
-            PFQueries q = new PFQueries(connString, "gonzaleza@carleton.edu");
+            PFQueries q = new PFQueries(connString, username);
+            List<string> all_filters = new List<string>()
+            {
+                "Time of Day", "GPS", "Camera Model", "Week Day", "Brightness"
+            };;
 
-            foreach (var filter in filters)
+            foreach (var filter in all_filters)
             {
                 switch (filter)
                 {
