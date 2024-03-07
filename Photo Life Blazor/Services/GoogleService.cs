@@ -62,7 +62,6 @@ namespace Photo_Life_Blazor.Services
                 });
                 var userInfo = await userInfoService.Userinfo.Get().ExecuteAsync();
                 username = userInfo.Email;
-                Console.WriteLine(username);
             }
             if (folderID == "default") {
                 List<string> folderId = new List<string>();
@@ -76,7 +75,6 @@ namespace Photo_Life_Blazor.Services
                 if (folderId.Any())
                 {
                     folderID = folderId[0];
-                    Console.WriteLine(folderID);
                 }
             }
             return username;
@@ -217,7 +215,6 @@ namespace Photo_Life_Blazor.Services
                 ids = ids.Replace("\"", "");
                 ids = ids.Replace("]", "");
                 var list_ids = ids.Split(",").ToList();
-                Console.WriteLine(ids);
                 return list_ids;
             }
             else
