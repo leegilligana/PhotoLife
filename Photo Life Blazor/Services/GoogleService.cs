@@ -310,7 +310,6 @@ namespace Photo_Life_Blazor.Services
             }
             else
             {
-                Console.WriteLine("getStoredPhotos");
                 Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
                 return "Error";
             }
