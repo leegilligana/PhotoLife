@@ -70,10 +70,12 @@ namespace ProfileMaker
                 foreach (var t in times)
                 {
                     TimeOnly.TryParse(t, out TimeOnly result);
+                    Console.WriteLine(result.ToString());
                     if (start_time <= result && result <= end_time)
                     {
                         new_count++;
-                    } else
+                    } 
+                    else
                     {
                         start_time.AddHours(1);
                         end_time.AddHours(1);
@@ -82,7 +84,7 @@ namespace ProfileMaker
                     }
                     if (new_count > old_count)
                     {
-                        ave_time = start_time.ToString() + ", " + end_time.ToString();
+                        ave_time = start_time.ToString() + "-" + end_time.ToString();
                     }
                 }
                 return ave_time;

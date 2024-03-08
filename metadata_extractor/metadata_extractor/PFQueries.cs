@@ -163,7 +163,6 @@ namespace DB_Queries
                 if (!reader.IsDBNull(0))
                 {
                     time_list.Add(reader.GetTimeSpan(0).ToString());
-                    Console.WriteLine(reader.GetTimeSpan(0).ToString());
                 }
             }
             reader.Close();

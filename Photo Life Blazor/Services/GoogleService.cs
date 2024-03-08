@@ -268,29 +268,25 @@ namespace Photo_Life_Blazor.Services
                 return false;
             }
         }
-        public async Task<List<string>> profileMaker()
+        public async Task<Dictionary<string,string>> profileMaker()
         {
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var content = new StringContent("{\"username\": \"" + username + "\"}", Encoding.UTF8,
                                     "application/json");
-            var response = await client.PostAsync("https://localhost:7214/api/metadata/MakeProfile", content);
+            var response = await client.PostAsync   ("https://localhost:7214/api/metadata/MakeProfile", content);
             if (response.IsSuccessStatusCode)
             {
                 // Parse the response body.
                 var results = await response.Content.ReadAsStringAsync();  //Make sure to add a reference to System.Net.Http.Formatting.dll
-                results = results.Replace("[", "");
-                results = results.Replace("\"", "");
-                results = results.Replace("]", "");
-                var list_results = results.Split(",").ToList();
-                Console.WriteLine(results);
-                return list_results;
+                var results_dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(results);
+                return results_dict;
             }
             else
             {
                 Console.WriteLine("getStoredPhotos");
                 Console.WriteLine("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase);
-                return new List<string>();
+                return null;
             }
         }
         
