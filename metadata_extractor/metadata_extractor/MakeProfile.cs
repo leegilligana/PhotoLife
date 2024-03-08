@@ -42,8 +42,41 @@ namespace ProfileMaker
          */
         public string AveTimeTaken(PFQueries q)
         {
-            return "NOT FINISHED";
+            var times = q.TimeList();
 
+            var start_time = new TimeOnly(0,0,0);
+            var end_time = new TimeOnly(1,0,0);
+            var old_count = 0;
+            var new_count = 0;
+
+            string ave_time = "";
+
+            if (times.Count <= 1)
+            {
+                return "0";
+            }
+            else
+            {
+                foreach (var t in times)
+                {
+                    TimeOnly.TryParse(t, out TimeOnly result);
+                    if (start_time <= result && result <= end_time)
+                    {
+                        new_count++;
+                    } else
+                    {
+                        start_time.AddHours(1);
+                        end_time.AddHours(1);
+                        old_count = new_count;
+                        new_count = 1;
+                    }
+                    if (new_count > old_count)
+                    {
+                        ave_time = t;
+                    }
+                }
+                return ave_time;
+            }
         }
 
         /** 
