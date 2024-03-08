@@ -62,6 +62,9 @@
                     </div>
                 </div>
             </div>
+            <div class="p-lg-4">
+                <button class="btn btn-default btn-main btn-dlt" @onclick="DeleteAllData"><h4>Delete Data</h4></button>
+            </div>
         </div>
     </div>
 </div>
@@ -100,6 +103,11 @@
         } else {
             noSignIn = true;
         }
+    }
+
+    private async void DeleteAllData()
+    {
+        await GoogleServices.deleteAll();
     }
 
     private void NavigateToProfile()
