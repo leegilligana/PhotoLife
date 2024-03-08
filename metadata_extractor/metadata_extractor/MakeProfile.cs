@@ -82,7 +82,7 @@ namespace ProfileMaker
                     }
                     if (new_count > old_count)
                     {
-                        ave_time = t + ", " + result.AddHours(1).ToString();
+                        ave_time = start_time.ToString() + ", " + end_time.ToString();
                     }
                 }
                 return ave_time;
