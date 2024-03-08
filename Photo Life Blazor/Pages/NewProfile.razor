@@ -54,20 +54,18 @@
 
 @code {
     [Parameter] public List<string> Headers { get; set; }
-    [Parameter] public object ProfileData { get; set; }
+    [Parameter] public Dictionary<string, string> ProfileData { get; set; }
 
     private Boolean TimeOfDayHeader = false,
                     WeekDayHeader = false,
                     GPSHeader = false,
                     CameraModelHeader = false,
-                    BrightnessHeader = false,
-                    PhotoFrequencyHeader = false;
+                    BrightnessHeader = false;
     private string TimeOfDay = "",
                     WeekDay = "",
                     GPS = "",
                     CameraModel = "",
-                    Brightness = "",
-                    PhotoFrequency = "";
+                    Brightness = "";
 
     // set the headers that were chosen from the presets
     private void SetProfileData()
@@ -77,39 +75,28 @@
             if (preset == "Time Of Day")
             {
                 TimeOfDayHeader = true;
-                //TimeOfDay = ProfileData.AveTime;
-                TimeOfDay = "18:32:48";
+                TimeOfDay = ProfileData["aveTime"];
             }
             else if (preset == "Week Day")
             {
                 WeekDayHeader = true;
-                //WeekDay = ProfileData.Weekday;
-                WeekDay = "FRIDAY";
-
+                WeekDay = ProfileData["weekday"];
             }
             else if (preset == "GPS")
             {
                 GPSHeader = true;
-                //GPS = ProfileData.GpsCords;
-                GPS = "44.460792' -93.151405'";
+                GPS = ProfileData["gpsCords"];
             }
             else if (preset == "Camera Model")
             {
                 CameraModelHeader = true;
-                //CameraModel = ProfileData.CameraModel;
-                CameraModel = "iPhone 13";
+                CameraModel = ProfileData["cameraModel"];
             }
             else if (preset == "Brightness")
             {
                 BrightnessHeader = true;
-                //Brightness = ProfileData.AveBrightness;
-                Brightness = "8.8392";
+                Brightness = ProfileData["aveBrightness"];
             }
-            /*else if ()
-            {
-                PhotoFrequencyHeader = true;
-                PhotoFrequency = ProfileData.PhotoTakingFreq();
-            }*/
         }
     }
 
