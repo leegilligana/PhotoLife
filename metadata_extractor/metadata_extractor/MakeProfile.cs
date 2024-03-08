@@ -54,8 +54,8 @@ namespace ProfileMaker
         {
             var times = q.TimeList();
 
-            var start_time = new TimeOnly(0,0,0);
-            var end_time = new TimeOnly(1,0,0);
+            var start_time = new TimeOnly(0, 0, 0);
+            var end_time = new TimeOnly(0, 59, 59);
             var old_count = 0;
             var new_count = 0;
 
@@ -70,19 +70,21 @@ namespace ProfileMaker
                 foreach (var t in times)
                 {
                     TimeOnly.TryParse(t, out TimeOnly result);
+
                     if (start_time <= result && result <= end_time)
                     {
                         new_count++;
-                    } else
+                    }
+                    else
                     {
-                        start_time.AddHours(1);
-                        end_time.AddHours(1);
+                        start_time = new TimeOnly(result.Hour, 0, 0);
+                        end_time = new TimeOnly(result.Hour, 59, 59);
                         old_count = new_count;
                         new_count = 1;
                     }
                     if (new_count > old_count)
                     {
-                        ave_time = t + ", " + result.AddHours(1).ToString();
+                        ave_time = start_time.ToString() + "-" + start_time.AddHours(1).ToString();
                     }
                 }
                 return ave_time;
