@@ -93,10 +93,18 @@ namespace DB_Queries
 
             List<DateTime> dates = new List<DateTime>();
             int i = 0;
+            
             while (reader.Read())
             {
-                dates.Add(reader.GetDateTime("date_time"));
-                i++;
+                try
+                {
+                    dates.Add(reader.GetDateTime("date_time"));
+                    i++;
+                }
+                catch (Exception)
+                {
+                    ;
+                }
             }
             reader.Close();
             return dates;
@@ -123,6 +131,27 @@ namespace DB_Queries
             return reader.GetString(reader.GetOrdinal("avg"));
         }
 
+        public List<NpgsqlPoint> GetCoords()
+        {
+            var cmd = new NpgsqlCommand("SELECT gps_coordinates FROM photolife WHERE owner = @owner;", conn);
+            cmd.Parameters.AddWithValue("owner", owner);
+            var reader = cmd.ExecuteReader();
+            List<NpgsqlPoint> coords = new List<NpgsqlPoint>();
+            while (reader.Read())
+            {
+                try
+                {
+                    coords.Add(reader.GetFieldValue<NpgsqlPoint>(reader.GetOrdinal("gps_coordinates")));
+                }
+                catch (Exception)
+                {
+                    ;
+                }
+            }
+            reader.Close();
+            return coords;
+        }
+
         public List<string> TimeList()
         {
             var cmd = new NpgsqlCommand("SELECT date_time :: timestamp :: time FROM photolife WHERE owner = @owner ORDER BY date_time;", conn);
@@ -140,7 +169,7 @@ namespace DB_Queries
         {
             var locList = new List<string>();
             GeoCoordinate inputCoordinate = new GeoCoordinate(inputLat, inputLong);
-            var cmd = new NpgsqlCommand("SELECT file_name, gps_coordinates FROM test3 WHERE owner = @owner;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name, gps_coordinates FROM photolife WHERE owner = @owner;", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             using (NpgsqlDataReader reader = cmd.ExecuteReader())
             {
@@ -193,7 +222,7 @@ namespace DB_Queries
 
         public void deleteAll()
         {
-            var cmd = new NpgsqlCommand("DELETE FROM test3 where Owner = @owner;", conn);
+            var cmd = new NpgsqlCommand("DELETE FROM photolife where Owner = @owner;", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             cmd.ExecuteNonQuery();
         }
