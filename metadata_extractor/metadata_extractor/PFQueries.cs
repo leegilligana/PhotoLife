@@ -160,8 +160,12 @@ namespace DB_Queries
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                time_list.Add(reader.GetString(0));
+                if (!reader.IsDBNull(0))
+                {
+                    time_list.Add(reader.GetTimeSpan(0).ToString());
+                }
             }
+            reader.Close();
             return time_list;
         }
 

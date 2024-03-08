@@ -47,3 +47,14 @@
     width: 14em;
     height: 4em;
 }
+
+.btn-dlt {
+    border: 4px #ff0111 solid; /* red */
+    background-color: #ff0111;
+    justify-content: center;
+    text-align: center;
+}
+
+.btn-dlt:hover {
+    background-color: #ff727b; /* light red */
+}
