@@ -17,34 +17,8 @@ namespace ProfileMaker
 {
     class MakeProfile
     {
-        /**
-         * Returns a string representing the average timespan a string took their photos
-         * between a specified start and end date 
-        */
-
         public MakeProfile()
         {
-        }
-        public string PhotoTakingFreq(PFQueries q)
-        {
-            var dates = q.DatesNoParam();
-
-            if (dates.Count <= 1)
-            {
-                return "0";
-            }
-            else
-            {
-                List<TimeSpan> time_diff = new List<TimeSpan>();
-                for (int i = 1; i < dates.Count; i++)
-                {
-                    time_diff.Add(dates[i] - dates[i - 1]);
-                }
-                double tick_ave = time_diff.Average(d => d.Ticks);
-                TimeSpan ave_dif = TimeSpan.FromTicks((long)tick_ave);
-
-                return ave_dif.ToString();
-            }
         }
 
         /** 
