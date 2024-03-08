@@ -42,7 +42,7 @@
         }
     } else
     {
-        <NewProfile Headers=(onlyPresetNames) />
+        <NewProfile Headers=(onlyPresetNames) ProfileData=(profileData)/>
     }
 </div>
 
@@ -54,7 +54,7 @@
     private bool isLoading = false; // loading screen
     private List<string> onlyPresetNames = new List<string>(); // preset headers for the profile stats
     private bool newProfileGenerated = false; // switches from profile maker to profile stats
-    public object profileData; // collects profile data from ProfileMaker
+    private Dictionary<string, string> profileData; // collects profile data from ProfileMaker
 
     public class PresetOption
     {
@@ -98,17 +98,12 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await GoogleServices.profileMaker();
-    }
-
     // start loading screen, ask for data, and send to the new profile component
     async private Task SetUpNewProfile()
     {        
         isLoading = true; // turn loading screen on
         StateHasChanged();
-        // profileData = await ProfileMakerService.CreateProfile(onlyPresetNames);
+        profileData = await GoogleServices.profileMaker();
         isLoading = false;
         StateHasChanged();
         newProfileGenerated = true; // send data to new profile template
