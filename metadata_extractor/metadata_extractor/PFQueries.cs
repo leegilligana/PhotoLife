@@ -93,10 +93,18 @@ namespace DB_Queries
 
             List<DateTime> dates = new List<DateTime>();
             int i = 0;
+            
             while (reader.Read())
             {
-                dates.Add(reader.GetDateTime("date_time"));
-                i++;
+                try
+                {
+                    dates.Add(reader.GetDateTime("date_time"));
+                    i++;
+                }
+                catch (Exception)
+                {
+                    ;
+                }
             }
             reader.Close();
             return dates;
@@ -123,11 +131,33 @@ namespace DB_Queries
             return reader.GetString(reader.GetOrdinal("avg"));
         }
 
+
+        public List<NpgsqlPoint> GetCoords()
+        {
+            var cmd = new NpgsqlCommand("SELECT gps_coordinates FROM photolife WHERE owner = @owner;", conn);
+            cmd.Parameters.AddWithValue("owner", owner);
+            var reader = cmd.ExecuteReader();
+            List<NpgsqlPoint> coords = new List<NpgsqlPoint>();
+            while (reader.Read())
+            {
+                try
+                {
+                    coords.Add(reader.GetFieldValue<NpgsqlPoint>(reader.GetOrdinal("gps_coordinates")));
+                }
+                catch (Exception)
+                {
+                    ;
+                }
+            }
+            reader.Close();
+            return coords;
+        }
+
         public string[] Location(double inputLat, double inputLong, int inputDistance)
         {
             var locList = new List<string>();
             GeoCoordinate inputCoordinate = new GeoCoordinate(inputLat, inputLong);
-            var cmd = new NpgsqlCommand("SELECT file_name, gps_coordinates FROM test3 WHERE owner = @owner;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name, gps_coordinates FROM photolife WHERE owner = @owner;", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             using (NpgsqlDataReader reader = cmd.ExecuteReader())
             {
@@ -167,7 +197,7 @@ namespace DB_Queries
 
         public string[] Width(int width)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND image_width = @width;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND image_width = @width;", conn);
             cmd.Parameters.AddWithValue("width", width);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -175,7 +205,7 @@ namespace DB_Queries
 
         public string[] Height(int height)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND image_height = @height;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND image_height = @height;", conn);
             cmd.Parameters.AddWithValue("height", height);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -183,14 +213,14 @@ namespace DB_Queries
 
         public string[] Orientation(string orientation)
         {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND orientation LIKE '%{orientation}%';", conn);
+            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND orientation LIKE '%{orientation}%';", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 
         public string[] XResolution(int xRes)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND x_resolution = @xRes;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND x_resolution = @xRes;", conn);
             cmd.Parameters.AddWithValue("xRes", xRes);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -198,7 +228,7 @@ namespace DB_Queries
 
         public string[] YResolution(int yRes)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND y_resolution = @yRes;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND y_resolution = @yRes;", conn);
             cmd.Parameters.AddWithValue("yRes", yRes);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -206,14 +236,14 @@ namespace DB_Queries
 
         public string[] Software(string software)
         {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND software LIKE '%{software}%';", conn);
+            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND software LIKE '%{software}%';", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 
         public string[] ExposureTime(double exposureTime)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND exposure_time = @exposureTime;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND exposure_time = @exposureTime;", conn);
             cmd.Parameters.AddWithValue("exposureTime", exposureTime);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -221,7 +251,7 @@ namespace DB_Queries
 
         public string[] ShutterSpeedValue(double shutterSpeedValue)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND shutter_speed_value = @shutterSpeedValue;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND shutter_speed_value = @shutterSpeedValue;", conn);
             cmd.Parameters.AddWithValue("shutterSpeedValue", shutterSpeedValue);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -229,7 +259,7 @@ namespace DB_Queries
 
         public string[] BrightnessValue(double brightnessValue)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND brightness_value = @brightnessValue;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND brightness_value = @brightnessValue;", conn);
             cmd.Parameters.AddWithValue("brightnessValue", brightnessValue);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -250,41 +280,41 @@ namespace DB_Queries
 
         public string[] SceneType(string sceneType)
         {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND scene_type LIKE '%{sceneType}%';", conn);
+            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND scene_type LIKE '%{sceneType}%';", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 
         public string[] ExposureMode(string exposureMode)
         {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND exposure_mode LIKE '%{exposureMode}%';", conn);
+            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND exposure_mode LIKE '%{exposureMode}%';", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 
         public string[] LensModel(string lensModel)
         {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND lens_model LIKE '%{lensModel}%';", conn);
+            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND lens_model LIKE '%{lensModel}%';", conn);
             return DataReader(cmd.ExecuteReader());
         }
 
         public string[] FileType(string fileType)
         {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND detected_file_type_name LIKE '%{fileType}%';", conn);
+            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND detected_file_type_name LIKE '%{fileType}%';", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 
         public string[] FileName(string fileName)
         {
-            var cmd = new NpgsqlCommand($"SELECT file_name FROM test3 WHERE owner = @owner AND file_name LIKE '%{fileName}%';", conn);
+            var cmd = new NpgsqlCommand($"SELECT file_name FROM photolife WHERE owner = @owner AND file_name LIKE '%{fileName}%';", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
         }
 
         public string[] FileSize(float fileSize)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND file_size = @fileSize;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND file_size = @fileSize;", conn);
             cmd.Parameters.AddWithValue("fileSize", fileSize);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -292,7 +322,7 @@ namespace DB_Queries
 
         public string[] GPSAltitude(double gpsAltitude)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND gps_altitude = @gpsAltitude;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND gps_altitude = @gpsAltitude;", conn);
             cmd.Parameters.AddWithValue("gpsAltitude", gpsAltitude);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -300,7 +330,7 @@ namespace DB_Queries
 
         public string[] GPSImgDirection(double gpsImgDirection)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND gps_img_direction = @gpsImgDirection;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND gps_img_direction = @gpsImgDirection;", conn);
             cmd.Parameters.AddWithValue("gpsImgDirection", gpsImgDirection);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -308,7 +338,7 @@ namespace DB_Queries
 
         public string[] GPSHorizontalPositioningError(double gpsHorizontalPositioningError)
         {
-            var cmd = new NpgsqlCommand("SELECT file_name FROM test3 WHERE owner = @owner AND gps_horizontal_positioning_error = @gpsHorizontalPositioningError;", conn);
+            var cmd = new NpgsqlCommand("SELECT file_name FROM photolife WHERE owner = @owner AND gps_horizontal_positioning_error = @gpsHorizontalPositioningError;", conn);
             cmd.Parameters.AddWithValue("gpsHorizontalPositioningError", gpsHorizontalPositioningError);
             cmd.Parameters.AddWithValue("owner", owner);
             return DataReader(cmd.ExecuteReader());
@@ -316,10 +346,13 @@ namespace DB_Queries
 
         public void deleteAll()
         {
-            var cmd = new NpgsqlCommand("DELETE FROM test3 where Owner = @owner;", conn);
+            var cmd = new NpgsqlCommand("DELETE FROM photolife where Owner = @owner;", conn);
             cmd.Parameters.AddWithValue("owner", owner);
             cmd.ExecuteNonQuery();
         }
+
+
+       
 
         /**
          * Updated DataReader. Original only grabbed data from hardcoded column. 

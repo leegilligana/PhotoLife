@@ -1,7 +1,17 @@
-﻿using DB_Queries;
+﻿using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Runtime.ExceptionServices;
+using System.Text;
+using DB_Queries;
+using Geocoding;
+using Geocoding.Google;
 using metadata_extractor;
+using metadata_extractor.Models;
 using Npgsql;
+using NpgsqlTypes;
 using Profiles;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProfileMaker
 {
@@ -87,9 +97,55 @@ namespace ProfileMaker
         /**
          * Returns string of the location where a user takes their photos most frequently
          */
-        public string MostFreqLocation(PFQueries q)
+
+        public async Task<string> MostFreqLocation(PFQueries q)
         {
-            return "NOT FINISHED";
+            NpgsqlPoint[] coords = q.GetCoords().ToArray();
+            List<List<double>> coordinates = new List<List<double>>();
+
+            foreach (NpgsqlPoint coord in coords)
+            {
+                var lon = coord.X;
+                var lat = coord.Y;
+                lon = Math.Round(lon, 6);
+                lat = Math.Round(lat, 6);
+                coordinates.Add(new List<double> { lon, lat });
+            }
+            Dictionary<List<double>, int> frequencyMap = new Dictionary<List<double>, int>();
+
+            var coordinatesArray = coordinates.ToArray();
+
+            foreach (var num in coordinatesArray)
+            {
+                if (frequencyMap.ContainsKey(num))
+                    frequencyMap[num]++;
+                else
+                    frequencyMap[num] = 1;
+            }
+
+            int maxCount = frequencyMap.Values.Max();
+            List<double> modeCoord = frequencyMap.First(kvp => kvp.Value == maxCount).Key;
+
+            Console.WriteLine("modeCoord: " + modeCoord.ToArray()[0] + modeCoord.ToArray()[1]);
+            string coordString = modeCoord.ToArray()[0].ToString() + ", " + modeCoord.ToArray()[1].ToString();
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await client.GetAsync("https://api.geoapify.com/v1/geocode/reverse?lat=" + modeCoord.ToArray()[0].ToString().Replace(",",".") + "&lon=" + modeCoord.ToArray()[1].ToString().Replace(",", ".") + "&apiKey=f71a9e5c0a014fc0bc1e95c8c22abbe5");
+            if (response.IsSuccessStatusCode)
+            {
+                // Parse the response body.
+                Console.WriteLine("https://api.geoapify.com/v1/geocode/reverse?lat=" + modeCoord.ToArray()[0].ToString().Replace(",", ".") + "&lon=" + modeCoord.ToArray()[1].ToString().Replace(",", ".") + "&apiKey=f71a9e5c0a014fc0bc1e95c8c22abbe5");
+                var city = await response.Content.ReadAsStringAsync();
+                var indexCity = city.IndexOf("city\":");
+                city = city.Substring(indexCity, indexCity + 30);
+                var indexColon = city.IndexOf(":");
+                var indexComma = city.IndexOf(",");
+                city = city.Substring(indexColon + 1, indexComma - 5);
+                city = city.Replace("\"", "");
+                city = city.Replace(",", "");
+                return city;
+            }
+            return "rip";
         }
 
         /**
@@ -171,7 +227,9 @@ namespace ProfileMaker
                         userProfile.AveTime = AveTimeTaken(q);
                         break;
                     case "GPS":
-                        userProfile.GpsCords = MostFreqLocation(q);
+                        var city = MostFreqLocation(q).Result;
+                        userProfile.GpsCords = city;
+                        Console.WriteLine("city: " + city);
                         break;
                     case "Camera Model":
                         userProfile.CameraModel = MostFreqCamModel(q);

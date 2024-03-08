@@ -9,6 +9,7 @@
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
+    <PackageReference Include="Geocoding.Google" Version="4.0.1" />
     <PackageReference Include="Npgsql" Version="8.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Device.Location.Portable" Version="1.0.0" />
