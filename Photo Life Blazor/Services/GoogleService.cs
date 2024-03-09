@@ -280,6 +280,10 @@ namespace Photo_Life_Blazor.Services
                 // Parse the response body.
                 var results = await response.Content.ReadAsStringAsync();  //Make sure to add a reference to System.Net.Http.Formatting.dll
                 var results_dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(results);
+                foreach (KeyValuePair<string, string> row in results_dict)
+                {
+                    Console.WriteLine("Key = {0}, Value = {1}", row.Key, row.Value);
+                }
                 return results_dict;
             }
             else
